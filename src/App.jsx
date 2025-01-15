@@ -14,10 +14,14 @@
 // }
 
 import React from 'react'
+import Navbar from './components/navbar'
 
 function App() {
   return (
-    <div className='bg-red-800'>App</div>
+    <>
+      <Navbar />
+      <div className='bg-red-950'>Apppppp</div>
+    </>
   )
 }
 
