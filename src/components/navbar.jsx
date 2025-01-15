@@ -4,7 +4,7 @@ const Navbar = () => {
   return (
     <nav className="relative w-full bg-gradient-to-b from-gray-900 to-gray-800 text-white p-4">
       {/* Background image overlay with dark clouds effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-gray-900/80 to-gray-800/80" />
+      <div className="bg-gray-800" />
       
       {/* Main navbar content */}
       <div className="relative flex items-center justify-between max-w-7xl mx-auto">
