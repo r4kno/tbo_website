@@ -6,6 +6,7 @@ const TourBookingForm = () => {
   const theme = {
     fieldBg: 'bg-gray-50', 
     containerBg: 'bg-white',
+    containerText: 'text-black',
     primary: 'bg-blue-600',
     primaryHover: 'hover:bg-blue-700',
     primaryText: 'text-blue-600',
@@ -40,10 +41,10 @@ const TourBookingForm = () => {
   };
 
   return (
-    <div className={`w-full max-w-4xl p-6 ${theme.containerBg} rounded-lg shadow-sm`}>
+    <div className={`w-full max-w-5xl p-6 ${theme.containerBg} rounded-lg shadow-sm`}>
       <div className="flex items-center gap-2 mb-6">
         <Plane className="w-5 h-5" />
-        <h2 className="text-lg font-semibold">Tour</h2>
+        <h2 className="text-lg font-semibold text-black">Tour</h2>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -51,7 +52,7 @@ const TourBookingForm = () => {
         <div className={`border rounded-lg p-3 ${theme.fieldBg}`}>
           <label className="text-sm text-gray-500 block mb-1">From - To</label>
           <div className="flex items-center justify-between">
-            <span className="text-base">Delhi - Goa</span>
+            <span className="text-black">Delhi - Goa</span>
             <ArrowRight className="w-4 h-4 text-gray-400" />
           </div>
         </div>
@@ -63,7 +64,7 @@ const TourBookingForm = () => {
             name="tripType"
             value={formData.tripType}
             onChange={handleInputChange}
-            className="w-full bg-transparent border-none p-0 focus:ring-0"
+            className={`w-full bg-transparent text-black border-none p-0 focus:ring-0  ${theme.containerText}`}
           >
             <option value="return">Return</option>
             <option value="oneway">One Way</option>
@@ -71,9 +72,9 @@ const TourBookingForm = () => {
         </div>
 
         {/* Date Range Field */}
-        <div className={`border rounded-lg p-3 ${theme.fieldBg}`}>
+        <div className={`border rounded-lg p-3 w-60 ${theme.fieldBg}`}>
           <label className="text-sm text-gray-500 block mb-1">Depart - Return</label>
-          <div className="flex gap-2">
+          <div className="flex gap-2 text-black">
             <input
               type="date"
               name="departDate"
@@ -81,15 +82,14 @@ const TourBookingForm = () => {
               onChange={handleInputChange}
               className="w-1/2 bg-transparent border-none p-0 focus:ring-0"
             />
-            {formData.tripType === 'return' && (
-              <input
-                type="date"
-                name="returnDate"
-                value={formData.returnDate}
-                onChange={handleInputChange}
-                className="w-1/2 bg-transparent border-none p-0 focus:ring-0"
-              />
-            )}
+            <input
+              type="date"
+              name="returnDate"
+              value={formData.returnDate}
+              onChange={handleInputChange}
+              className="w-1/2 bg-transparent border-none p-0 focus:ring-0"
+            />
+            
           </div>
         </div>
 
@@ -103,7 +103,7 @@ const TourBookingForm = () => {
             max="9"
             value={formData.passengers}
             onChange={handleInputChange}
-            className="w-full bg-transparent border-none p-0 focus:ring-0"
+            className={`w-full bg-transparent border-none p-0 focus:ring-0  ${theme.containerText}`}
           />
         </div>
 
@@ -114,7 +114,7 @@ const TourBookingForm = () => {
             name="class"
             value={formData.class}
             onChange={handleInputChange}
-            className="w-full bg-transparent border-none p-0 focus:ring-0"
+            className={`w-full bg-transparent border-none p-0 focus:ring-0  ${theme.containerText}`}
           >
             {classOptions.map(option => (
               <option key={option.value} value={option.value}>
@@ -133,7 +133,7 @@ const TourBookingForm = () => {
             min="0"
             value={formData.budget}
             onChange={handleInputChange}
-            className="w-full bg-transparent border-none p-0 focus:ring-0"
+            className={`w-full bg-transparent border-none p-0 focus:ring-0  ${theme.containerText}`}
           />
         </div>
       </div>
@@ -148,7 +148,7 @@ const TourBookingForm = () => {
               value={formData.promoCode}
               onChange={handleInputChange}
               placeholder="Enter promo code"
-              className={`border rounded p-2 text-sm ${theme.fieldBg}`}
+              className={`border rounded p-2 text-sm ${theme.containerText}`}
             />
           ) : (
             <button 

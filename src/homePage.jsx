@@ -1,30 +1,51 @@
 import React from 'react';
 import TourBookingForm from './components/TourBookingForm'
+import FlightTicket from './components/flightTicket';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlane } from '@fortawesome/free-solid-svg-icons';
+import titleFont from './fonts/titleFont.otf'
 
 
 const HomePage = () => {
   return (
-    <div className="relative w-full min-h-screen bg-slate-100">
-      {/* Hero Section with Background Image */}
-      <div className="relative w-full h-[600px] bg-teal-800 text-white">
+    <div className="relative w-full min-h-screen bg-slate-100` overflow-hidden">
+      <div className="relative w-full h-[600px] bg-[url('./assets/bg.png')] bg-cover bg-center text-white rounded-b-[20px]">
         {/* Navigation */}
-        <div className="absolute top-0 w-full p-4 flex justify-between items-center">
-          <div>Logo Here</div>
-          <div className="flex gap-4">
-            <button className="px-4 py-2 bg-orange-500 rounded">Login</button>
-            <button className="px-4 py-2 bg-blue-500 rounded">Sign up</button>
+        <div className="relative flex items-center justify-between max-w-7xl mx-auto p-4">
+        {/* Left section */}
+        <div className="flex items-center space-x-6">
+          {/* Plane icon and text */}
+          <div className="flex items-center space-x-2">
+          <FontAwesomeIcon icon={faPlane} />
+            <span className="text-sm font-medium">Find Flight along with stays</span>
           </div>
         </div>
+
+        {/* Center - Logo */}
+        <div className="absolute left-1/2 transform -translate-x-1/2">
+          <span className="text-4xl font-bold text-blue-400">tbo<span className="text-red-400">.com</span></span>
+        </div>
+
+        {/* Right section */}
+        <div className="flex items-center space-x-4">
+          <button className="text-white hover:text-blue-200 transition-colors">
+            Login
+          </button>
+          <button className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-md transition-colors">
+            Sign up
+          </button>
+        </div>
+      </div>
 
         {/* Hero Content */}
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center w-full">
           <h3 className="text-2xl font-bold mb-4">Helping Others</h3>
-          <h1 className="text-8xl font-bold mb-4">LIVE & TRAVEL</h1>
+          <h1 className="text-8xl font-bold style={{ fontFamily: `url(${titleFont})` }} mb-4">LIVE & TRAVEL</h1>
           <p className="text-xl">"Pack Your Bags, We've Got This!"</p>
         </div>
 
         {/* Search Form Card */}
-        <div className="absolute top-[60%] left-1/2 -translate-x-1/2 w-[80%] max-w-4xl">
+        <div className="absolute top-[60%] left-1/2 -translate-x-1/2 w-[90%] max-w-5xl">
           {/* <div className="bg-white rounded-lg shadow-lg p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               <div className="bg-gray-100 p-4 rounded">From-To Input</div>
@@ -52,11 +73,8 @@ const HomePage = () => {
           <div className="h-40 bg-gray-200 rounded">Brief content here</div>
           
           {/* Flight Details */}
-          <div className="mt-8 bg-white p-4 rounded-lg shadow">
-            <div className="flex justify-between items-center">
-              <div>Flight details placeholder</div>
-              <div className="text-xl font-bold">₹6,400</div>
-            </div>
+          <div className="mt-4">
+            <FlightTicket />
           </div>
         </div>
 
