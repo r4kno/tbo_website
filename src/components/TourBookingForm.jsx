@@ -56,6 +56,16 @@ const TourBookingForm = () => {
             <ArrowRight className="w-4 h-4 text-gray-400" />
           </div>
         </div>
+        <div className={`border rounded-lg p-3 ${theme.fieldBg}`}>
+          <label className="text-sm text-gray-500 block mb-1">Destination</label>
+          <input
+            type="text"
+            name="destination"
+            value={formData.passengers}
+            onChange={handleInputChange}
+            className={`w-full bg-transparent border-none p-0 focus:ring-0  ${theme.containerText}`}
+          />
+        </div>
 
         {/* Trip Type Dropdown */}
         <div className={`border rounded-lg p-3 ${theme.fieldBg}`}>

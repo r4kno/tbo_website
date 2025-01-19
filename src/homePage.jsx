@@ -1,4 +1,6 @@
 import React from 'react';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import TourBookingForm from './components/TourBookingForm'
 import FlightTicket from './components/flightTicket';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -7,6 +9,34 @@ import titleFont from './fonts/titleFont.otf'
 
 
 const HomePage = () => {
+
+    
+  const [token, setToken] = useState("");
+  const Authenticate2 = async (e) => {
+
+    const formData = {
+      ClientId: "ApiIntegrationNew",
+      UserName: "Hackathon",
+      Password: "Hackathon@1234",
+      EndUserIp: "192.168.1.12"
+    };
+    
+    try {
+        const response = await axios.post("/SharedServices/SharedData.svc/rest/Authenticate", formData, Headers = {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+        );
+        console.log("Response:", response);
+        setToken(response.data.TokenId);
+        console.log("Token:", token);
+    } catch (error) {
+        console.log("Error:", error);
+    }
+};
+  useEffect(() => {
+    Authenticate2();
+  } , []);
   return (
     <div className="relative w-full min-h-screen bg-slate-100` overflow-hidden">
       <div className="relative w-full h-[600px] bg-[url('./assets/bg.png')] bg-cover bg-center text-white rounded-b-[20px]">
