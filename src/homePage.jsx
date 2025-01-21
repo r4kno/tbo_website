@@ -40,7 +40,7 @@ const HomePage = () => {
   } , []);
   return (
     <div className="relative w-full min-h-screen bg-slate-100` overflow-hidden">
-      <div className="relative w-full h-[600px] bg-[url('./assets/bg2.png')] bg-cover bg-center text-white rounded-b-[20px]">
+      <div className="relative w-full h-[600px] bg-[url('./assets/bg2.jpg')] bg-cover bg-center text-white rounded-b-[20px]">
         {/* Navigation */}
         <div className="relative flex items-center justify-between max-w-7xl mx-auto p-4">
         {/* Left section */}
