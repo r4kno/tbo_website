@@ -9,6 +9,11 @@ export default defineConfig({
       '/SharedServices': {
         target: 'http://api.tektravels.com',
         changeOrigin: true,
+      },
+      '/BookingEngineService': {
+        target: 'http://api.tektravels.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/BookingEngineService/, '/BookingEngineService_Air')
       }
     }
   }

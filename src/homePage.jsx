@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import TourBookingForm from './components/TourBookingForm'
+import TourBookingForm from './components/trial'
 import FlightTicket from './components/flightTicket';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlane } from '@fortawesome/free-solid-svg-icons';
@@ -28,9 +28,10 @@ const HomePage = () => {
         }
         );
         console.log("Response:", response);
+        console.log("Token:", response.data.TokenId);
         setToken(response.data.TokenId);
         console.log("Token:", token);
-    } catch (error) {
+      } catch (error) {
         console.log("Error:", error);
     }
 };
@@ -53,15 +54,15 @@ const HomePage = () => {
 
         {/* Center - Logo */}
         <div className="absolute left-1/2 transform -translate-x-1/2">
-          <span className="text-4xl font-bold text-blue-400">tbo<span className="text-red-400">.com</span></span>
+          <span className="text-4xl font-bold text-[#307fe2]">tbo<span className="text-[#f26b25]">.com</span></span>
         </div>
 
         {/* Right section */}
         <div className="flex items-center space-x-4">
-          <button className="text-white hover:text-blue-200 transition-colors">
+          <button className="bg-[#f26b25] hover:bg-blue-600 px-4 py-2 rounded-md transition-colors">
             Login
           </button>
-          <button className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-md transition-colors">
+          <button className="bg-[#307fe2] hover:bg-blue-600 px-4 py-2 rounded-md transition-colors">
             Sign up
           </button>
         </div>
