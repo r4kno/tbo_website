@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import TourBookingForm from './components/trial'
+import TourBookingForm from './components/trail2'
 import FlightTicket from './components/flightTicket';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlane } from '@fortawesome/free-solid-svg-icons';
@@ -12,43 +12,95 @@ const HomePage = () => {
 
     
   const [token, setToken] = useState("");
-  const Authenticate2 = async (e) => {
+    const [flightResults, setFlightResults] = useState(null);
+    const [error, setError] = useState(null);
 
-    const formData = {
-      ClientId: "ApiIntegrationNew",
-      UserName: "Hackathon",
-      Password: "Hackathon@1234",
-      EndUserIp: "192.168.1.12"
-    };
-    
-    try {
-        const response = await axios.post("/SharedServices/SharedData.svc/rest/Authenticate", formData, Headers = {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
+    const Authenticate2 = async () => {
+        const formData = {
+            ClientId: "ApiIntegrationNew",
+            UserName: "Hackathon",
+            Password: "Hackathon@1234",
+            EndUserIp: "192.168.1.12"
+        };
+        
+        try {
+            const response = await axios.post("/SharedServices/SharedData.svc/rest/Authenticate", formData, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            });
+            console.log("Authentication Response:", response);
+            setToken(response.data.TokenId);
+        } catch (error) {
+            console.error("Authentication Error:", error);
+            setError("Authentication failed");
         }
-        );
-        console.log("Response:", response);
-        console.log("Token:", response.data.TokenId);
-        setToken(response.data.TokenId);
-        console.log("Token:", token);
-      } catch (error) {
-        console.log("Error:", error);
+    };
+
+    const backend = async () => {
+        const formData = {
+            "TokenId": "22998134-4d4f-4b8d-9f79-18fb75b1",
+            "AdultCount": "1",
+            "ChildCount": "1",
+            "InfantCount": "1",
+            "DirectFlight": "false",
+            "OneStopFlight": "false",
+            "JourneyType": "1",
+            "PreferredAirlines": null,
+            "Segments": [
+                {
+                    "Origin": "RPR",
+                    "Destination": "BOM",
+                    "FlightCabinClass": "1",
+                    "PreferredDepartureTime": "2025-01-30T00:00:00",
+                    "PreferredArrivalTime": "2025-01-30T00:00:00"
+                }
+            ],
+            "Sources": null
+        }
+
+        console.log('Sending data to backend:', formData);
+        
+        try {
+            const response = await fetch('http://localhost:5000/proxy-api', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const data = await response.json();
+            console.log('Backend Response:', data);
+            
+            if (data.error) {
+                setError(data.error);
+                console.error('API Error:', data);
+            } else {
+                setFlightResults(data);
+            }
+        } catch (error) {
+            console.error('Fetch Error:', error);
+            setError('Failed to fetch flight results');
+        }
     }
-};
-  useEffect(() => {
-    Authenticate2();
-  } , []);
+
+    useEffect(() => {
+        Authenticate2();
+        backend();
+    }, []);
   return (
     <div className="relative w-full min-h-screen bg-slate-100` overflow-hidden">
       <div className="relative w-full h-[600px] bg-[url('./assets/bg2.jpg')] bg-cover bg-center text-white rounded-b-[20px]">
         {/* Navigation */}
-        <div className="relative flex items-center justify-between max-w-7xl mx-auto p-4">
+        <div className="relative flex items-center justify-between max-w-7xl p-4 mx-auto">
         {/* Left section */}
         <div className="flex items-center space-x-6">
           {/* Plane icon and text */}
           <div className="flex items-center space-x-2">
           <FontAwesomeIcon icon={faPlane} />
-            <span className="text-sm font-medium">Find Flight along with stays</span>
+            <span className="text-sm font-medium">One place for complete Tour</span>
           </div>
         </div>
 
@@ -77,21 +129,6 @@ const HomePage = () => {
 
         {/* Search Form Card */}
         <div className="absolute top-[60%] left-1/2 -translate-x-1/2 w-[90%] max-w-5xl">
-          {/* <div className="bg-white rounded-lg shadow-lg p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              <div className="bg-gray-100 p-4 rounded">From-To Input</div>
-              <div className="bg-gray-100 p-4 rounded">Date Range Input</div>
-              <div className="bg-gray-100 p-4 rounded">Passengers Input</div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-gray-100 p-4 rounded">Class Selection</div>
-              <div className="bg-gray-100 p-4 rounded">Budget Input</div>
-              <div className="flex items-center justify-end gap-4">
-                <span>+ Add Promo Code</span>
-                <button className="px-6 py-2 bg-blue-500 text-white rounded">Plan Tour</button>
-              </div>
-            </div>
-          </div> */}
           <TourBookingForm />
         </div>
       </div>
@@ -99,18 +136,17 @@ const HomePage = () => {
       {/* Main Content */}
       <div className="mt-32 px-8 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
         {/* Brief Section */}
-        <div className="bg-gray-50 p-6 rounded-lg">
+        {/* <div className="bg-gray-50 p-6 rounded-lg">
           <h2 className="text-2xl font-bold mb-4">Brief</h2>
-          <div className="h-40 bg-gray-200 rounded">Brief content here</div>
+          <div className="h-40 bg-gray-200 rounded">Brief content here</div> */}
           
           {/* Flight Details */}
           <div className="mt-4">
-            <FlightTicket />
           </div>
-        </div>
+        {/* </div> */}
 
         {/* Timeline Section */}
-        <div className="bg-gray-50 p-6 rounded-lg">
+        {/* <div className="bg-gray-50 p-6 rounded-lg">
           <h2 className="text-2xl font-bold mb-4">Timeline</h2>
           <div className="space-y-4">
             {[1, 2, 3].map(day => (
@@ -119,7 +155,7 @@ const HomePage = () => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
