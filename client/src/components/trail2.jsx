@@ -24,24 +24,22 @@ const TourBookingWizard = ({ onComplete }) => {
       placeholder: "Enter destination"
     },
     {
-      question: "What type of trip are you planning?",
-      field: "tripType",
-      type: "select",
-      options: [
-        { value: "return", label: "Round Trip" },
-        { value: "oneway", label: "One Way" }
-      ]
-    },
-    {
       question: "When would you like to depart?",
       field: "departDate",
-      type: "date"
+      type: "number"
     },
     {
-      question: queryData.tripType === 'return' ? "When would you like to return?" : null,
+      question: "How many days will you spend",
       field: "returnDate",
-      type: "date",
-      conditional: queryData.tripType === 'return'
+      type: "number",
+      onChange: (e) => {
+        const departDate = new Date(queryData.departDate);
+        const numberOfDays = parseInt(e.target.value, 10);
+        const returnDate = new Date(departDate);
+        returnDate.setDate(departDate.getDate() + numberOfDays);
+        handleInputChange(returnDate.toISOString().split('T')[0]);
+      },
+      type: "number"
     },
     {
       question: "How many passengers are traveling?",
@@ -49,17 +47,6 @@ const TourBookingWizard = ({ onComplete }) => {
       type: "number",
       min: 1,
       max: 9
-    },
-    {
-      question: "What class would you prefer?",
-      field: "class",
-      type: "select",
-      options: [
-        { value: "economy", label: "Economy" },
-        { value: "premium", label: "Premium Economy" },
-        { value: "business", label: "Business" },
-        { value: "first", label: "First Class" }
-      ]
     },
     {
       question: "What's your budget for this trip?",
