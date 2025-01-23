@@ -119,20 +119,20 @@ const TourBookingForm = () => {
     console.log("API Payload:", apiPayload);
 
     try {
-        const response = await axios.post("/BookingEngineService_Air/AirService.svc/rest/Search", apiPayload, Headers = {
+      const response = await axios.post("/api/BookingEngineService_Air/AirService.svc/rest/Search", 
+        apiPayload,
+        {
+          headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
-            }
-        );
-        
-        console.log('API Response:', response.data);
-      } catch (error) {
-        // Detailed error logging
-        console.error('Full error:', error);
-        console.error('Error response:', error.response);
-        console.error('Error request:', error.request);
-        console.error('Error config:', error.config);
-      }
+            'Accept': 'application/json',
+          },
+          withCredentials: false
+        }
+      );
+      console.log('API Response:', response.data);
+    } catch (error) {
+      console.error('Error details:', error);
+    }
   };
 
   return (
