@@ -26,7 +26,20 @@ const TourBookingWizard = ({ onComplete }) => {
     {
       question: "When would you like to depart?",
       field: "departDate",
-      type: "date"
+      type: "number"
+    },
+    {
+      question: "How many days will you spend",
+      field: "returnDate",
+      type: "number",
+      onChange: (e) => {
+        const departDate = new Date(queryData.departDate);
+        const numberOfDays = parseInt(e.target.value, 10);
+        const returnDate = new Date(departDate);
+        returnDate.setDate(departDate.getDate() + numberOfDays);
+        handleInputChange(returnDate.toISOString().split('T')[0]);
+      },
+      type: "number"
     },
     {
       question: "How many passengers are traveling?",
