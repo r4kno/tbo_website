@@ -21,8 +21,6 @@ const TourBookingForm = () => {
     passengers: 2,
     class: 'economy',
     budget: 60000,
-    promoCode: '',
-    showPromoInput: false
   });
 
   const classOptions = [
@@ -151,23 +149,7 @@ const TourBookingForm = () => {
       {/* Bottom Section */}
       <div className="flex items-center justify-between mt-6">
         <div className="relative">
-          {formData.showPromoInput ? (
-            <input
-              type="text"
-              name="promoCode"
-              value={formData.promoCode}
-              onChange={handleInputChange}
-              placeholder="Enter promo code"
-              className={`border rounded p-2 text-sm ${theme.containerText}`}
-            />
-          ) : (
-            <button 
-              onClick={() => setFormData(prev => ({ ...prev, showPromoInput: true }))}
-              className={`${theme.primaryText} ${theme.primaryHover} text-sm font-medium`}
-            >
-              + Add Promo Code
-            </button>
-          )}
+          
         </div>
         <button className={`${theme.primary} ${theme.primaryHover} text-white px-4 py-2 rounded-lg flex items-center gap-2`}>
           Plan Tour

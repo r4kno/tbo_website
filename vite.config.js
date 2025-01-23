@@ -10,10 +10,10 @@ export default defineConfig({
         target: 'http://api.tektravels.com',
         changeOrigin: true,
       },
-      '/BookingEngineService': {
+      '/api': {
         target: 'http://api.tektravels.com',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/BookingEngineService/, '/BookingEngineService_Air')
+        rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
   }
