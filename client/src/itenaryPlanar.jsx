@@ -90,9 +90,9 @@ const ItineraryPlanner = ({ queryData }) => {
   return (
     <div className="max-w-4xl mx-auto p-4 relative">
       <div className="bg-white rounded-lg shadow p-6 mb-6">
-        {/* <h2 className="text-xl font-bold mb-4">Itinerary Planner</h2> */}
+        <h2 className="text-xl font-bold mb-4">Itinerary Planner</h2>
         <div className="flex flex-col gap-4">
-          {/* <div className="flex gap-4">
+          <div className="flex gap-4">
             <input
               type="text"
               placeholder="Enter destination"
@@ -113,7 +113,7 @@ const ItineraryPlanner = ({ queryData }) => {
               onChange={(e) => setStartDate(e.target.value)}
               className="w-40 p-2 border rounded"
             />
-          </div> */}
+          </div>
           {/* <button
             onClick={handleSearch}
             disabled={loading}
