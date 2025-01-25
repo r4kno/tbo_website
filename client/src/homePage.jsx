@@ -8,12 +8,13 @@ import { faPlane } from '@fortawesome/free-solid-svg-icons';
 import titleFont from './fonts/titleFont.otf'
 
 
-const HomePage = () => {
+const HomePage = ({onComplete}) => {
 
     
   const [token, setToken] = useState("");
-    const [flightResults, setFlightResults] = useState(null);
-    const [error, setError] = useState(null);
+  const [flightResults, setFlightResults] = useState(null);
+  const [error, setError] = useState(null);
+  const [queryData, setQueryData] = useState(null);
 
     const Authenticate2 = async () => {
         const formData = {
@@ -40,8 +41,8 @@ const HomePage = () => {
 
     const backend = async () => {
         const formData = {
-            "TokenId": token,
-            "EndUserIp": "192.168.11.120",
+            "TokenId": "ff3577e9-3e04-4fea-baad-abd7484cb95e",
+            "EndUserIp": "192.168.1.9",
             "AdultCount": "1",
             "ChildCount": "1",
             "InfantCount": "1",
@@ -92,7 +93,7 @@ const HomePage = () => {
         backend();
     }, []);
   return (
-    <div className="relative w-full min-h-screen bg-slate-100` overflow-hidden">
+    <div className="relative w-full min-h-screen bg-slate-100 overflow-hidden">
       <div className="relative w-full h-[600px] bg-[url('./assets/bg2.jpg')] bg-cover bg-center text-white rounded-b-[20px]">
         {/* Navigation */}
         <div className="relative flex items-center justify-between max-w-7xl p-4 mx-auto">
@@ -130,7 +131,7 @@ const HomePage = () => {
 
         {/* Search Form Card */}
         <div className="absolute top-[60%] left-1/2 -translate-x-1/2 w-[90%] max-w-5xl">
-          <TourBookingForm />
+          <TourBookingForm onComplete={onComplete}/>
         </div>
       </div>
 

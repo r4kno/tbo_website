@@ -2,49 +2,43 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import requests
 import json
+import ssl
+import urllib3
+
+# Disable SSL warnings if needed
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
-def process_external_api_response(response):
+def get_custom_session():
     """
-    Process and select the most appropriate response.
-    
-    Args:
-        response (dict): Response from the TBO API
-    
-    Returns:
-        dict: Processed response to send to frontend
+    Create a custom requests session with more robust connection settings
     """
-    print("Full API Response:", json.dumps(response, indent=2))
+    session = requests.Session()
     
-    # Check if the response contains flight results
-    if not response:
-        return {"error": "No flights found", "details": "Empty response from TBO API"}
+    # Disable SSL verification (use cautiously)
+    session.verify = False
     
-    # Extract and process flight results
-    try:
-        # Adjust these keys based on the actual TBO API response structure
-        flights = response.get('Results', [])
-        
-        if not flights:
-            return {"error": "No flights available", "details": "No results in API response"}
-        
-        return {
-            "selected_response": flights[0] if flights else None,
-            "total_flights": len(flights)
-        }
+    # Custom adapter with extended timeout and retry strategy
+    adapter = requests.adapters.HTTPAdapter(
+        pool_connections=10,  # Number of connection pools
+        pool_maxsize=10,      # Max connections per pool
+        max_retries=urllib3.Retry(
+            total=3,           # Total number of retries
+            backoff_factor=0.1,# Delay between retries
+            status_forcelist=[500, 502, 503, 504]  # Retry on these status codes
+        )
+    )
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
     
-    except Exception as e:
-        return {
-            "error": "Error processing API response",
-            "details": str(e)
-        }
+    return session
 
 @app.route('/proxy-api', methods=['POST'])
 def proxy_api():
     """
-    Proxy route to handle API requests and responses
+    Proxy route to handle API requests and responses with enhanced error handling
     """
     try:
         # Get data from frontend request
@@ -52,21 +46,28 @@ def proxy_api():
         print("Frontend Request Data:", json.dumps(frontend_data, indent=2))
         
         # Configuration for TBO API
-        EXTERNAL_API_URL = "https://api.tektravels.com/BookingEngineService_Air/AirService.svc/rest/Search"
+        EXTERNAL_API_URL = "http://api.tektravels.com/BookingEngineService_Air/AirService.svc/rest/Search"
+        
+        # Custom headers with more comprehensive settings
         headers = {
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "TokenId": frontend_data.get('TokenId')  # Add TokenId from frontend
+            # Add any additional headers required by TBO API
+            # "Authorization": "Bearer YOUR_TOKEN_IF_NEEDED",
         }
         
-        # Make request to external API
-        print("Sending request to TBO API...")
-        external_response = requests.post(
+        # Create a custom session
+        session = get_custom_session()
+        
+        # Make request to external API with enhanced settings
+        print("Attempting to connect to TBO API...")
+        external_response = session.post(
             EXTERNAL_API_URL, 
             headers=headers, 
             json=frontend_data,
-            timeout=(5, 30),  # (connection timeout, read timeout)
-            verify=False  # Only if SSL verification fails
+            timeout=(10, 30),  # (connect timeout, read timeout)
+            # If SSL verification is an issue
+            verify=False
         )
         
         # Check if request was successful
@@ -76,27 +77,34 @@ def proxy_api():
         api_response = external_response.json()
         print("Raw API Response:", json.dumps(api_response, indent=2))
         
-        # Process and select best response
-        processed_response = process_external_api_response(api_response)
-        
-        # Return processed response to frontend
-        return jsonify(processed_response), 200
+        # Return the full response to frontend
+        return jsonify(api_response), 200
+    
+    except requests.exceptions.ConnectTimeout:
+        print("Connection Timeout: Could not connect to the API")
+        return jsonify({
+            "error": "Connection timeout",
+            "details": "Unable to establish connection with the API"
+        }), 504
+    
+    except requests.exceptions.ReadTimeout:
+        print("Read Timeout: API took too long to respond")
+        return jsonify({
+            "error": "Read timeout",
+            "details": "API did not respond within the expected time"
+        }), 504
     
     except requests.RequestException as e:
         # Detailed error logging for request exceptions
-        print("Request Exception:", str(e))
+        print("Request Exception Details:", {
+            "error": str(e),
+            "type": type(e).__name__,
+            "args": e.args
+        })
         return jsonify({
             "error": "External API request failed",
             "details": str(e),
             "request_data": frontend_data
-        }), 500
-    
-    except json.JSONDecodeError as e:
-        # Handle JSON parsing errors
-        print("JSON Decode Error:", str(e))
-        return jsonify({
-            "error": "Failed to parse API response",
-            "details": str(e)
         }), 500
     
     except Exception as e:
@@ -106,13 +114,6 @@ def proxy_api():
             "error": "Unexpected error occurred",
             "details": str(e)
         }), 500
-
-@app.route('/health', methods=['GET'])
-def health_check():
-    """
-    Simple health check endpoint
-    """
-    return jsonify({"status": "healthy"}), 200
 
 if __name__ == '__main__':
     # Run the Flask app

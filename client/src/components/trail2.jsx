@@ -16,7 +16,6 @@ const TourBookingWizard = ({ onComplete }) => {
   });
 
   const steps = [
-
     {
       question: "Where would you like to go?",
       field: "to",
@@ -26,7 +25,7 @@ const TourBookingWizard = ({ onComplete }) => {
     {
       question: "When would you like to depart?",
       field: "departDate",
-      type: "number"
+      type: "date"
     },
     {
       question: "How many days will you spend",
@@ -44,16 +43,49 @@ const TourBookingWizard = ({ onComplete }) => {
     {
       question: "How many passengers are traveling?",
       field: "passengers",
-      type: "number",
+      type: "range",
       min: 1,
-      max: 9
+      max: 10,
+      step: 1,
+      render: (value) => (
+        <div className="space-y-4">
+          <input
+            type="range"
+            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+            min="1"
+            max="10"
+            value={value || 1}
+            onChange={(e) => handleInputChange(e.target.value)}
+          />
+          <div className="text-center text-gray-700 font-medium">
+            {value || 1} passengers
+          </div>
+        </div>
+      )
     },
     {
       question: "What's your budget for this trip?",
       field: "budget",
-      type: "number",
-      min: 0,
-      placeholder: "Enter amount"
+      type: "range",
+      min: 5000,
+      max: 100000,
+      step: 1000,
+      render: (value) => (
+        <div className="space-y-4">
+          <input
+            type="range"
+            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+            min="5000"
+            max="100000"
+            step="1000"
+            value={value || 5000}
+            onChange={(e) => handleInputChange(e.target.value)}
+          />
+          <div className="text-center text-gray-700 font-medium">
+            ₹{value || 5000}
+          </div>
+        </div>
+      )
     }
   ].filter(step => step.question !== null);
 
@@ -88,6 +120,7 @@ const TourBookingWizard = ({ onComplete }) => {
 
   const handleSubmit = (e) => {
     console.log(queryData);
+    onComplete(queryData);
   }
 
   return (
@@ -124,7 +157,9 @@ const TourBookingWizard = ({ onComplete }) => {
         >
           <h3 className="text-xl font-medium mb-4">{steps[currentStep].question}</h3>
           
-          {steps[currentStep].type === 'select' ? (
+          {steps[currentStep].render ? (
+            steps[currentStep].render(queryData[steps[currentStep].field])
+          ) : steps[currentStep].type === 'select' ? (
             <select
               value={queryData[steps[currentStep].field]}
               onChange={(e) => handleInputChange(e.target.value)}

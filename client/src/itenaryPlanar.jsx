@@ -26,7 +26,7 @@ const mockSightseeingAPI = async (destination, days) => {
   });
 };
 
-const ItineraryPlanner = () => {
+const ItineraryPlanner = ({ queryData }) => {
   const [destination, setDestination] = useState("");
   const [numDays, setNumDays] = useState(1);
   const [startDate, setStartDate] = useState("");
@@ -36,16 +36,27 @@ const ItineraryPlanner = () => {
   const daysRef = useRef({});
 
   const handleSearch = async () => {
-    if (!destination || numDays < 1 || !startDate) return;
+    if (!queryData) return;
+    
+    setDestination(queryData.to);
+    setNumDays(queryData.returnDate);
+    setStartDate(queryData.departDate);
+    
     setLoading(true);
     try {
-      const data = await mockSightseeingAPI(destination, numDays);
+      const data = await mockSightseeingAPI(queryData.to, queryData.returnDate);
       setItinerary(data);
     } catch (error) {
       console.error("Error fetching attractions:", error);
     }
     setLoading(false);
   };
+
+  useEffect(() => {
+    if (queryData) {
+      handleSearch();
+    }
+  }, [queryData]);
 
   const getDayDate = (dayNum) => {
     const date = new Date(startDate);
@@ -103,13 +114,13 @@ const ItineraryPlanner = () => {
               className="w-40 p-2 border rounded"
             />
           </div>
-          <button
+          {/* <button
             onClick={handleSearch}
             disabled={loading}
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-blue-300"
           >
             {loading ? "Loading..." : "Plan"}
-          </button>
+          </button> */}
         </div>
       </div>
 
