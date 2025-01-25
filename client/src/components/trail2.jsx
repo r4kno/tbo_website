@@ -19,7 +19,14 @@ const TourBookingWizard = ({ onComplete }) => {
     {
       question: "Where would you like to go?",
       field: "to",
-      type: "text",
+      type: "select",
+      options: [
+        { value: "DEL", label: "Delhi" },
+        { value: "BOM", label: "Mumbai" },
+        { value: "BLR", label: "Bangalore" },
+        { value: "HYD", label: "Hyderabad" },
+        { value: "MAA", label: "Chennai" }
+      ],
       placeholder: "Enter destination"
     },
     {
@@ -37,8 +44,7 @@ const TourBookingWizard = ({ onComplete }) => {
         const returnDate = new Date(departDate);
         returnDate.setDate(departDate.getDate() + numberOfDays);
         handleInputChange(returnDate.toISOString().split('T')[0]);
-      },
-      type: "number"
+      }
     },
     {
       question: "How many passengers are traveling?",
@@ -190,7 +196,7 @@ const TourBookingWizard = ({ onComplete }) => {
         <button
           onClick={prevStep}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
-            currentStep === 0 ? 'invisible' : 'bg-gray-100 hover:bg-gray-200'
+            currentStep === 0 ? 'invisible' : 'bg-gray-600 hover:bg-gray-200'
           }`}
         >
           <ArrowLeft className="w-4 h-4" />

@@ -65,7 +65,7 @@ def proxy_api():
             EXTERNAL_API_URL, 
             headers=headers, 
             json=frontend_data,
-            timeout=(10, 30),  # (connect timeout, read timeout)
+            timeout=(20, 40),  # (connect timeout, read timeout)
             # If SSL verification is an issue
             verify=False
         )
@@ -77,8 +77,8 @@ def proxy_api():
         api_response = external_response.json()
         print("Raw API Response:", json.dumps(api_response, indent=2))
         
-        # Return the full response to frontend
-        return jsonify(api_response), 200
+        # Return the first result to frontend
+        return jsonify(api_response['Response']['Results'][0][0]), 200
     
     except requests.exceptions.ConnectTimeout:
         print("Connection Timeout: Could not connect to the API")

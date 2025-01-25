@@ -5,6 +5,7 @@ import TourBookingForm from './components/trail2'
 import FlightTicket from './components/flightTicket';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlane } from '@fortawesome/free-solid-svg-icons';
+import { flightSample} from "./assets/flightSample"
 import titleFont from './fonts/titleFont.otf'
 
 
@@ -41,7 +42,7 @@ const HomePage = ({onComplete}) => {
 
     const backend = async () => {
         const formData = {
-            "TokenId": "ff3577e9-3e04-4fea-baad-abd7484cb95e",
+            "TokenId": "db7f2a79-f188-44bb-986d-22561e8b1dc4",
             "EndUserIp": "192.168.1.9",
             "AdultCount": "1",
             "ChildCount": "1",
@@ -52,7 +53,7 @@ const HomePage = ({onComplete}) => {
             "PreferredAirlines": null,
             "Segments": [
                 {
-                    "Origin": "RPR",
+                    "Origin": "DEL",
                     "Destination": "BOM",
                     "FlightCabinClass": "1",
                     "PreferredDepartureTime": "2025-01-30T00:00:00",
@@ -63,7 +64,7 @@ const HomePage = ({onComplete}) => {
         }
 
         console.log('Sending data to backend:', formData);
-        
+        console.log('query data filled user user: ', queryData);
         try {
             const response = await fetch('http://localhost:5000/proxy-api', {
                 method: 'POST',
@@ -75,6 +76,7 @@ const HomePage = ({onComplete}) => {
 
             const data = await response.json();
             console.log('Backend Response:', data);
+            console.log('price:', data.Fare.PublishedFare);
             
             if (data.error) {
                 setError(data.error);
@@ -88,15 +90,15 @@ const HomePage = ({onComplete}) => {
         }
     }
 
+    backend();
     useEffect(() => {
-        Authenticate2();
-        backend();
+      Authenticate2();
     }, []);
   return (
     <div className="relative w-full min-h-screen bg-slate-100 overflow-hidden">
       <div className="relative w-full h-[600px] bg-[url('./assets/bg2.jpg')] bg-cover bg-center text-white rounded-b-[20px]">
         {/* Navigation */}
-        <div className="relative flex items-center justify-between max-w-7xl p-4 mx-auto">
+        <div className="relative flex items-center justify-between max-w-7xl p-4 mx-auto backdrop-blur-lg bg-gray-700 bg-opacity-50">
         {/* Left section */}
         <div className="flex items-center space-x-6">
           {/* Plane icon and text */}
@@ -144,6 +146,7 @@ const HomePage = ({onComplete}) => {
           
           {/* Flight Details */}
           <div className="mt-4">
+            <FlightTicket flightData={flightResults? flightResults : flightSample} />
           </div>
         {/* </div> */}
 

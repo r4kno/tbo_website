@@ -1,44 +1,82 @@
 import React from 'react';
 
 const defaultFlightData = {
-  flightDetails: {
-    airline: "Indigo",
-    aircraftType: "Airbus A320",
-    flightNumber: "6E-123",
-  },
-  schedule: {
-    date: "2 Jan, Friday",
-    duration: "2h 28m",
-    departure: {
-      time: "12:00 pm",
-      city: "Delhi",
-      code: "DEL"
+  Segments: [[{
+    Airline: {
+      AirlineName: "Indigo",
+      FlightNumber: "N/A"
     },
-    arrival: {
-      time: "2:28 pm",
-      city: "Goa",
-      code: "GOI"
+    Craft: "N/A",
+    Duration: 0,
+    Origin: {
+      DepTime: new Date().toISOString(),
+      Airport: {
+        CityName: "N/A",
+        AirportCode: "N/A"
+      }
+    },
+    Destination: {
+      ArrTime: new Date().toISOString(),
+      Airport: {
+        CityName: "N/A", 
+        AirportCode: "N/A"
+      }
     }
-  },
-  pricing: {
-    amount: "₹6,400",
-    currency: "INR"
-  },
-  amenities: {
-    hasWifi: true,
-    hasMeal: true,
-    hasEntertainment: true,
-    hasCharger: true
+  }]],
+  Fare: {
+    PublishedFare: 0,
+    Currency: "INR"
   }
 };
 
 const FlightTicket = ({ flightData = defaultFlightData }) => {
-  const {
-    flightDetails,
-    schedule,
-    pricing,
-    amenities
-  } = flightData;
+  // Safely extract flight details
+  const segment = flightData.Segments?.[0]?.[0] || {};
+  
+  const flightDetails = {
+    airline: segment.Airline?.AirlineName || "Unknown Airline",
+    flightNumber: segment.Airline?.FlightNumber || "N/A",
+    aircraftType: segment.Craft || "N/A",
+  };
+
+  const schedule = {
+    date: segment.Origin?.DepTime 
+      ? new Date(segment.Origin.DepTime).toLocaleDateString('en-US', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+          weekday: 'short'
+        }) 
+      : "N/A",
+    duration: segment.Duration 
+      ? `${Math.floor(segment.Duration / 60)}h ${segment.Duration % 60}m` 
+      : "N/A",
+    departure: {
+      time: segment.Origin?.DepTime 
+        ? new Date(segment.Origin.DepTime).toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+          })
+        : "N/A",
+      city: segment.Origin?.Airport?.CityName || "N/A",
+      code: segment.Origin?.Airport?.AirportCode || "N/A"
+    },
+    arrival: {
+      time: segment.Destination?.ArrTime 
+        ? new Date(segment.Destination.ArrTime).toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+          })
+        : "N/A",
+      city: segment.Destination?.Airport?.CityName || "N/A",
+      code: segment.Destination?.Airport?.AirportCode || "N/A"
+    }
+  };
+
+  const pricing = {
+    amount: `₹${(flightData.Fare?.PublishedFare || 0).toLocaleString()}`,
+    currency: flightData.Fare?.Currency || "INR"
+  };
 
   return (
     <div className="max-w-2xl p-6 bg-white rounded-lg shadow-md">
@@ -85,35 +123,8 @@ const FlightTicket = ({ flightData = defaultFlightData }) => {
       </div>
 
       <div className="flex justify-between mt-6">
-        <div className="flex space-x-4">
-          {amenities.hasWifi && (
-            <div className="flex items-center">
-              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
-              </svg>
-            </div>
-          )}
-          {amenities.hasMeal && (
-            <div className="flex items-center">
-              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
-              </svg>
-            </div>
-          )}
-          {amenities.hasEntertainment && (
-            <div className="flex items-center">
-              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-          )}
-          {amenities.hasCharger && (
-            <div className="flex items-center">
-              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-          )}
+        <div className="text-gray-600">
+          Flight Number: {flightDetails.flightNumber}
         </div>
       </div>
     </div>
