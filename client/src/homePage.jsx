@@ -33,11 +33,85 @@ const HomePage = ({onComplete}) => {
                 }
             });
             console.log("Authentication Response:", response);
-            setToken(response.data.TokenId);
-        } catch (error) {
+            if (response.data.TokenId) {
+              console.log('Token got:', response.data.TokenId);
+              setToken(response.data.TokenId);  
+              console.log('Toket set: ', token);
+          }
+          } catch (error) {
             console.error("Authentication Error:", error);
             setError("Authentication failed");
-        }
+          }
+    };
+    const transformQueryData = (queryData) => {
+      // Map trip type to JourneyType
+      const journeyTypeMap = {
+        'return': '2',   // Round trip
+        'oneway': '1',   // One-way trip
+        'multicity': '3' // Multi-city trip
+      };
+    
+      // Map cabin class
+      const cabinClassMap = {
+        'economy': '1',
+        'premium': '2',
+        'business': '3',
+        'first': '4'
+      };
+    
+      // Predefined time formats
+      const timeFormats = {
+        'AnyTime': '00:00:00',
+        'Morning': '08:00:00',
+        'AfterNoon': '14:00:00',
+        'Evening': '19:00:00',
+        'Night': '01:00:00'
+      };
+    
+      // Default values for counts
+      const adultCount = queryData.passengers;
+      const childCount = '0';  // Assuming no children unless specified
+      const infantCount = '0'; // Assuming no infants unless specified
+    
+      // Determine segments based on trip type
+      const segments = [];
+    
+      // Always add outbound flight
+      segments.push({
+        Origin: queryData.from || "DEL", // Default to Delhi if not specified
+        Destination: queryData.to,
+        FlightCabinClass: cabinClassMap[queryData.class] || '1', // Default to economy
+        PreferredDepartureTime: `${queryData.departDate}T${timeFormats.Morning}`,
+        PreferredArrivalTime: `${queryData.departDate}T${timeFormats.Evening}`
+      });
+    
+      // Add return flight for round trip
+      if (queryData.tripType === 'return') {
+        const returnDate = new Date(queryData.departDate);
+        returnDate.setDate(returnDate.getDate() + parseInt(queryData.returnDate));
+        
+        segments.push({
+          Origin: queryData.to,
+          Destination: queryData.from || "DEL",
+          FlightCabinClass: cabinClassMap[queryData.class] || '1',
+          PreferredDepartureTime: returnDate.toISOString().split('T')[0] + `T${timeFormats.Morning}`,
+          PreferredArrivalTime: returnDate.toISOString().split('T')[0] + `T${timeFormats.Evening}`
+        });
+      }
+    
+      return {
+        TokenId: token, // Your existing token
+        EndUserIp: "192.168.1.9", // Your existing IP
+        AdultCount: adultCount.toString(),
+        ChildCount: childCount,
+        InfantCount: infantCount,
+        DirectFlight: "false",
+        OneStopFlight: "false",
+        JourneyType: journeyTypeMap[queryData.tripType] || '1', // Default to one-way if noted
+        PreferredAirlines: null,
+        Segments: segments,
+        Sources: null
+      };
     };
 
     const backend = async () => {
@@ -62,16 +136,16 @@ const HomePage = ({onComplete}) => {
             ],
             "Sources": null
         }
+        const flightSearchData = transformQueryData(queryData);
 
-        console.log('Sending data to backend:', formData);
-        console.log('query data filled user user: ', queryData);
+        console.log('Sending data to backend:', flightSearchData);
         try {
             const response = await fetch('http://localhost:5000/proxy-api', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(flightSearchData)
             });
 
             const data = await response.json();
@@ -90,15 +164,20 @@ const HomePage = ({onComplete}) => {
         }
     }
 
-    backend();
     useEffect(() => {
       Authenticate2();
     }, []);
+    
+    const handleDataTransfer = (data) => {
+      setQueryData(data);
+      console.log('query data:', queryData);
+      backend();
+    }
   return (
     <div className="relative w-full min-h-screen bg-slate-100 overflow-hidden">
       <div className="relative w-full h-[600px] bg-[url('./assets/bg2.jpg')] bg-cover bg-center text-white rounded-b-[20px]">
         {/* Navigation */}
-        <div className="relative flex items-center justify-between max-w-7xl p-4 mx-auto backdrop-blur-lg bg-gray-700 bg-opacity-50">
+        <div className="fixed w-screen flex items-center justify-between p-4 mx-auto backdrop-blur-lg bg-gray-700 z-10 bg-opacity-50">
         {/* Left section */}
         <div className="flex items-center space-x-6">
           {/* Plane icon and text */}
@@ -133,7 +212,7 @@ const HomePage = ({onComplete}) => {
 
         {/* Search Form Card */}
         <div className="absolute top-[60%] left-1/2 -translate-x-1/2 w-[90%] max-w-5xl">
-          <TourBookingForm onComplete={onComplete}/>
+          <TourBookingForm onComplete={handleDataTransfer}/>
         </div>
       </div>
 

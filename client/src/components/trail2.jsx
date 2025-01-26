@@ -125,7 +125,7 @@ const TourBookingWizard = ({ onComplete }) => {
   };
 
   const handleSubmit = (e) => {
-    console.log(queryData);
+    console.log('query data at trail2 file: ',queryData);
     onComplete(queryData);
   }
 
@@ -212,7 +212,7 @@ const TourBookingWizard = ({ onComplete }) => {
                 onClick={handleSubmit}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
                     >
-                Complete
+                Plan my Tour
                 <Send className="w-4 h-4" />
               </motion.button>
             </>
