@@ -7,42 +7,76 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlane } from '@fortawesome/free-solid-svg-icons';
 import { flightSample} from "./assets/flightSample"
 import titleFont from './fonts/titleFont.otf'
-
+import cityData from './assets/city_codes.json';
 
 const HomePage = ({onComplete}) => {
+  const [userIP, setUserIP] = useState("");
+  const [cityCode, setCityCode] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
+  const getUserLocation = async () => {
+    try {
+      const response = await fetch('https://ipapi.co/json/');
+      const data = await response.json();
+      setUserIP(data.ip);
+      console.log('User IP:', userIP);
+      
+      // Search for city code
+      const cityMatch = cityData.CityList.find(city => 
+        city.Name.toLowerCase().includes(data.city.toLowerCase())
+      );
+      
+      if (cityMatch) {
+        setCityCode(cityMatch.Code);
+        console.log('City Code:', cityCode);                          
+      }
+    } catch (error) {
+      console.error("Error fetching IP:", error);
+      setUserIP("192.168.1.12"); // Fallback IP
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getUserLocation().then(() => {
+      Authenticate2();
+    });
+  }, []);
+
+  // Update formData to use userIP
+  const Authenticate2 = async () => {
+    const formData = {
+      ClientId: "ApiIntegrationNew", 
+      UserName: "Hackathon",
+      Password: "Hackathon@1234",
+      EndUserIp: userIP || "192.168.1.12" // Use fetched IP or fallback
+    };
     
+    try {
+      const response = await axios.post("/SharedServices/SharedData.svc/rest/Authenticate", formData, {
+          headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+          }
+      });
+      console.log("Authentication Response:", response);
+      if (response.data.TokenId) {
+        console.log('Token got:', response.data.TokenId);
+        setToken(response.data.TokenId);  
+        console.log('Toket set: ', token);
+    }
+    } catch (error) {
+      console.error("Authentication Error:", error);
+      setError("Authentication failed");
+    }
+  };
+
   const [token, setToken] = useState("");
   const [flightResults, setFlightResults] = useState(null);
   const [error, setError] = useState(null);
   const [queryData, setQueryData] = useState(null);
 
-    const Authenticate2 = async () => {
-        const formData = {
-            ClientId: "ApiIntegrationNew",
-            UserName: "Hackathon",
-            Password: "Hackathon@1234",
-            EndUserIp: "192.168.1.12"
-        };
-        
-        try {
-            const response = await axios.post("/SharedServices/SharedData.svc/rest/Authenticate", formData, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-            });
-            console.log("Authentication Response:", response);
-            if (response.data.TokenId) {
-              console.log('Token got:', response.data.TokenId);
-              setToken(response.data.TokenId);  
-              console.log('Toket set: ', token);
-          }
-          } catch (error) {
-            console.error("Authentication Error:", error);
-            setError("Authentication failed");
-          }
-    };
     const transformQueryData = (queryData) => {
       // Map trip type to JourneyType
       const journeyTypeMap = {
@@ -115,27 +149,7 @@ const HomePage = ({onComplete}) => {
     };
 
     const backend = async () => {
-        const formData = {
-            "TokenId": "db7f2a79-f188-44bb-986d-22561e8b1dc4",
-            "EndUserIp": "192.168.1.9",
-            "AdultCount": "1",
-            "ChildCount": "1",
-            "InfantCount": "1",
-            "DirectFlight": "false",
-            "OneStopFlight": "false",
-            "JourneyType": "1",
-            "PreferredAirlines": null,
-            "Segments": [
-                {
-                    "Origin": "DEL",
-                    "Destination": "BOM",
-                    "FlightCabinClass": "1",
-                    "PreferredDepartureTime": "2025-01-30T00:00:00",
-                    "PreferredArrivalTime": "2025-01-30T00:00:00"
-                }
-            ],
-            "Sources": null
-        }
+
         const flightSearchData = transformQueryData(queryData);
 
         console.log('Sending data to backend:', flightSearchData);
@@ -164,10 +178,6 @@ const HomePage = ({onComplete}) => {
         }
     }
 
-    useEffect(() => {
-      Authenticate2();
-    }, []);
-    
     const handleDataTransfer = (data) => {
       setQueryData(data);
       console.log('query data:', queryData);
@@ -224,9 +234,12 @@ const HomePage = ({onComplete}) => {
           <div className="h-40 bg-gray-200 rounded">Brief content here</div> */}
           
           {/* Flight Details */}
+          {flightResults? (
           <div className="mt-4">
-            <FlightTicket flightData={flightResults? flightResults : flightSample} />
+            <FlightTicket flightData={flightResults} />
           </div>
+
+          ): (<></>)}
         {/* </div> */}
 
         {/* Timeline Section */}
@@ -235,7 +248,7 @@ const HomePage = ({onComplete}) => {
           <div className="space-y-4">
             {[1, 2, 3].map(day => (
               <div key={day} className="bg-gray-200 p-4 rounded">
-                Day {day} Timeline Content
+                Day {day} Timeline Conte
               </div>
             ))}
           </div>
