@@ -7,6 +7,7 @@ const TourBookingWizard = ({ onComplete }) => {
   const [queryData, setQueryData] = useState({
     from: '',
     to: '',
+    destination: '',
     tripType: 'return',
     departDate: '',
     returnDate: '',

@@ -10,10 +10,9 @@ export default defineConfig({
         target: 'http://api.tektravels.com',
         changeOrigin: true,
       },
-      '/api': {
-        target: 'http://api.tektravels.com',
+      '/TBOHolidays_HotelAPI': {
+        target: 'http://api.tbotechnology.in',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
   }

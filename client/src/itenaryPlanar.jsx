@@ -27,6 +27,7 @@ const mockSightseeingAPI = async (destination, days) => {
 };
 
 const ItineraryPlanner = ({ queryData }) => {
+  console.log("ItineraryPlanner received queryData:", queryData);
   const [destination, setDestination] = useState("");
   const [numDays, setNumDays] = useState(1);
   const [startDate, setStartDate] = useState("");
@@ -41,6 +42,7 @@ const ItineraryPlanner = ({ queryData }) => {
     setDestination(queryData.to);
     setNumDays(queryData.returnDate);
     setStartDate(queryData.departDate);
+    console.log("Searching for attractions in", queryData.to, "for", queryData.returnDate, "days");
     
     setLoading(true);
     try {
@@ -132,7 +134,7 @@ const ItineraryPlanner = ({ queryData }) => {
             ))}
           </div>
 
-          <div className="w-56 fixed top-8 right-11 h-fit">
+          <div className="w-56 fixed top-16 right-11 h-fit">
             <div className="bg-white rounded-lg shadow p-4">
               {Object.keys(itinerary).map((day) => (
                 <div
