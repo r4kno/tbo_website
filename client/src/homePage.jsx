@@ -4,17 +4,21 @@ import { useEffect, useState } from 'react';
 import TourBookingForm from './components/trail2'
 import FlightTicket from './components/flightTicket';
 import ItineraryPlanner from './itenaryPlanar.jsx';
+import { LoadingScreen } from './components/LoadingScreen.jsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { AnimatePresence } from 'framer-motion';
 import { faPlane } from '@fortawesome/free-solid-svg-icons';
 import { flightSample} from "./assets/flightSample"
 import titleFont from './fonts/titleFont.otf'
 import cityData from './assets/city_codes.json';
+import { use } from 'react';
 
 const HomePage = ({onComplete}) => {
   const [userIP, setUserIP] = useState("");
   const [cityCode, setCityCode] = useState("");
   const [cityName, setCityName] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [isPlanning, setIsPlanning] = useState(false);
   const [hotelResults, setHotelResults] = useState(null);
   const [isTourPlanned, setIsTourPlanned] = useState(false);
 
@@ -281,6 +285,7 @@ const handleDataTransfer = (data) => {
   console.log('Received data:', data);
   setQueryData(data);
   setIsTourPlanned(true);
+  setIsPlanning(true);
 };
 
 useEffect(() => {
@@ -290,6 +295,12 @@ useEffect(() => {
     hotelSearch(cityCode);
   }
 }, [queryData]);
+useEffect(() => {
+  if (flightResults && hotelResults) {
+  console.log('planning over')
+  setIsPlanning(false);
+  }
+}, [flightResults, hotelResults]);
 
 useEffect(() => {
   getUserLocation().then(() => {
@@ -297,7 +308,11 @@ useEffect(() => {
   });
 }, []);
   return (
+    <>
     <div className="relative w-full min-h-screen bg-slate-100 overflow-hidden">
+      <AnimatePresence>
+      {isLoading && <LoadingScreen isLoading={isPlanning}/>}
+      </AnimatePresence>
       <div className="relative w-full h-[600px] bg-[url('./assets/bg2.jpg')] bg-cover bg-center text-white rounded-b-[20px]">
         {/* Navigation */}
         <div className="fixed w-screen flex items-center justify-between p-4 mx-auto backdrop-blur-lg bg-gray-700 z-10 bg-opacity-50">
@@ -348,11 +363,11 @@ useEffect(() => {
           
           {/* Flight Details */}
           {flightResults? (
-          <div className="mt-4 max-w-4xl mx-auto p-4 relative">
+            <div className="mt-4 max-w-4xl mx-auto p-4 relative">
             <FlightTicket flightData={flightResults} />
           </div>
 
-          ): (<></>)}
+): (<></>)}
         {/* </div> */}
         {/* Search Form Card */}
 
@@ -379,6 +394,7 @@ useEffect(() => {
               </div>
             )}
     </div>
+            </>
   );
 };
 
