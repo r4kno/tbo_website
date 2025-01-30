@@ -35,8 +35,8 @@ The **Travel Trip Planner** is a modern web application designed to simplify the
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/travel-trip-planner.git
-   cd travel-trip-planner
+   git clone https://github.com/r4kno/tbo_website.git
+   cd tbo_website/client
    ```
 
 2. Install dependencies:
@@ -46,9 +46,10 @@ The **Travel Trip Planner** is a modern web application designed to simplify the
 
 3. Start the backend server:
    ```bash
-   node server.js
+   cd server
+   python3 backend.py
    ```
-   The backend will run at `http://localhost:3000`.
+   The backend will run at `http://localhost:4000`.
 
 4. Start the frontend using Vite:
    ```bash
