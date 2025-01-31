@@ -1,0 +1,1 @@
+print("Extracted Sightseeing Data:", json.dumps(sightseeing_data, indent=2)) 
