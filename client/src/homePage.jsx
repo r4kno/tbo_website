@@ -287,8 +287,8 @@ const backend = async () => {
 const getTimeline = async () => {
         // Frontend code example
         const searchParams = {
-          "CityId": "115936",  // Dubai
-          "CountryCode": "AE",
+          "CityId": "144306",  // Dubai
+          "CountryCode": "IN",
           "FromDate": "2025-02-14T00:00:00",
           "ToDate": "2025-02-18T00:00:00",
           "AdultCount": 2,
@@ -422,8 +422,8 @@ useEffect(() => {
       </div>
             {isTourPlanned ? (
               <div className="col-span-1">
-                {console.log("queryData being passed:", queryData)}
-                <ItineraryPlanner queryData={queryData} />
+                {console.log("queryData being passed:", timeline)}
+                <ItineraryPlanner queryData={timeline} />
               </div>
             ) : (
               <div className="col-span-1">

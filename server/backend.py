@@ -177,7 +177,7 @@ def generate_itinerary_prompt(activities, num_days):
                 "day": 1,
                 "activities": [
                     {{
-                        "time": "Morning/Afternoon/Evening",
+                        "time": "timeslot (am/pm)",
                         "activity": "Name of activity",
                         "duration": "Duration in hours",
                         "cost": "Cost in INR",
