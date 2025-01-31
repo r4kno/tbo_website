@@ -9,7 +9,7 @@ export const LoadingScreen = ({ isLoading }) => {
     <AnimatePresence>
       {isLoading && (
         <motion.div
-        className="fixed inset-0 flex items-center justify-center bg-gray-900 z-50"
+        className="fixed inset-0 flex items-center justify-center bg-gray-900/70 z-50"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -32,7 +32,7 @@ export const LoadingScreen = ({ isLoading }) => {
               <motion.div
                 className="absolute inset-0 rounded-full bg-white opacity-20"
                 animate={{
-                  scale: [1, 1.2, 1],
+                  scale: [1, 1, 1],
                 }}
                 transition={{
                   duration: 2,
@@ -41,7 +41,7 @@ export const LoadingScreen = ({ isLoading }) => {
                 }}
               />
               <div className="relative w-24 h-24 flex items-center justify-center">
-                <motion.div
+                {/* <motion.div
                   className="w-full h-full border-4 border-blue-500 rounded-full border-t-transparent"
                   animate={{ rotate: 360 }}
                   transition={{
@@ -49,7 +49,7 @@ export const LoadingScreen = ({ isLoading }) => {
                     repeat: Number.POSITIVE_INFINITY,
                     ease: "linear",
                   }}
-                />
+                /> */}
                 <motion.div
                   className="absolute w-3/4 h-3/4 border-4 border-[#f26b25] rounded-full border-t-transparent"
                   animate={{ rotate: -360 }}

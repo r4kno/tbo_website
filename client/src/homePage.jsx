@@ -256,6 +256,8 @@ const backend = async () => {
   }
 
   console.log('Sending data to backend:', flightSearchData);
+  setIsPlanning(true);
+
   try {
     const response = await fetch('http://localhost:5000/proxy-api', {
       method: 'POST',
@@ -285,7 +287,6 @@ const handleDataTransfer = (data) => {
   console.log('Received data:', data);
   setQueryData(data);
   setIsTourPlanned(true);
-  setIsPlanning(true);
 };
 
 useEffect(() => {
