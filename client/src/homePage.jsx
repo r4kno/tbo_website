@@ -166,6 +166,7 @@ const [token, setToken] = useState("");
 const [flightResults, setFlightResults] = useState(null);
 const [error, setError] = useState(null);
 const [queryData, setQueryData] = useState(null);
+const [timeline, setTimeline] = useState(null);
 
 const transformQueryData = (queryData) => {
   if (!queryData) {
@@ -283,6 +284,41 @@ const backend = async () => {
   }
 }
 
+const getTimeline = async () => {
+        // Frontend code example
+        const searchParams = {
+          "CityId": "115936",  // Dubai
+          "CountryCode": "AE",
+          "FromDate": "2025-02-14T00:00:00",
+          "ToDate": "2025-02-18T00:00:00",
+          "AdultCount": 2,
+          "ChildCount": 1,
+          "ChildAge": ["2"],
+          "PreferredLanguage": 0,
+          "PreferredCurrency": "INR",
+          "IsBaseCurrencyRequired": false,
+          "BookingMode": 5,
+          "EndUserIp": "192.168.5.56",
+          "TokenId": "92cacf82-022b-427a-b46a-3c32d169f1d3",
+          "KeyWord": ""
+        };
+        console.log('Sending request to backend for TIMELINE');
+
+        // Make request to your backend
+        const response = await fetch('http://localhost:5000/create-itinerary', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          mode: 'cors',
+          body: JSON.stringify(searchParams)
+        });
+
+        const itinerary = await response.json();
+        setTimeline(itinerary);
+        console.log('ITENARY RECIEVED: ', itinerary);
+}
+
 const handleDataTransfer = (data) => {
   console.log('Received data:', data);
   setQueryData(data);
@@ -333,7 +369,7 @@ useEffect(() => {
 
         {/* Right section */}
         <div className="flex items-center space-x-4">
-          <button className="bg-[#f26b25] hover:bg-red-600 px-4 py-2 rounded-md transition-colors">
+          <button className="bg-[#f26b25] hover:bg-red-600 px-4 py-2 rounded-md transition-colors" onClick={getTimeline}>
             Login
           </button>
           <button className="bg-[#307fe2] hover:bg-blue-600 px-4 py-2 rounded-md transition-colors">
@@ -360,7 +396,7 @@ useEffect(() => {
         {/* Brief Section */}
         {/* <div className="bg-gray-50 p-6 rounded-lg">
           <h2 className="text-2xl font-bold mb-4">Brief</h2>
-          <div className="h-40 bg-gray-200 rounded">Brief content here</div> */}
+          <div className="h-40 bg-gray-200 rounded">Brief content e</div> */}
           
           {/* Flight Details */}
           {flightResults? (

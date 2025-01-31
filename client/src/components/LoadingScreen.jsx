@@ -61,14 +61,14 @@ export const LoadingScreen = ({ isLoading }) => {
                 />
               </div>
             </div>
-            <motion.h2 
-              className="text-4xl font-bold text-white mt-8"
+            <motion.p
+              className="text-2xl font-italic text-white mt-8"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
             >
-              Gathering Data...
-            </motion.h2>
+              Gathering Information...
+            </motion.p>
           </div>
         </motion.div>
       )}

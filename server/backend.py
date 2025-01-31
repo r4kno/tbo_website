@@ -41,79 +41,6 @@ def get_custom_session():
     
     return session
 
-def extract_sightseeing_info(response_data):
-    """Extract relevant information from the TBO API response"""
-    sightseeing_data = []
-    
-    try:
-        results = response_data["Response"]["SightseeingSearchResults"]
-        for activity in results:
-            sightseeing_info = {
-                "name": activity.get("SightseeingName", ""),
-                "city": activity.get("CityName", ""),
-                "date": activity.get("FromDate", ""),
-                "duration": activity["DurationDescription"][0]["TotalDuration"] if activity.get("DurationDescription") else "",
-                "description": activity.get("TourDescription", ""),
-                "price": activity["Price"]["OfferedPriceRoundedOff"] if activity.get("Price") else 0,
-                "image_urls": activity.get("ImageList", []),
-                "inclusions": extract_inclusions(activity.get("TourDescription", ""))
-            }
-            sightseeing_data.append(sightseeing_info)
-    except Exception as e:
-        raise ValueError(f"Error extracting sightseeing info: {str(e)}")
-    
-    return sightseeing_data
-
-def extract_inclusions(description):
-    """Extract inclusions from tour description"""
-    inclusions = []
-    if "Inclusions:" in description:
-        inclusion_text = description.split("Inclusions:")[1].split("Exclusions:")[0]
-        inclusions = [inc.strip() for inc in inclusion_text.split("<br>") if inc.strip()]
-    return inclusions
-
-def create_prompt(sightseeing_data):
-    """Create a structured prompt for the LLM based on sightseeing data"""
-    activities_text = "\n".join([
-        f"- {activity['name']}: {activity['price']} INR\n  Duration: {activity['duration']}\n  Includes: {', '.join(activity['inclusions'])}"
-        for activity in sightseeing_data
-    ])
-    
-    prompt = f"""
-    Based on the following available activities in {sightseeing_data[0]['city']}:
-    
-    {activities_text}
-    
-    Create a detailed itinerary that:
-    1. Organizes these activities in a logical sequence
-    2. Suggests additional complementary activities and dining options
-    3. Considers travel time between locations
-    
-    Return the response in the following JSON format:
-    {{
-        "destination": "{sightseeing_data[0]['city']}",
-        "activities": [
-            {{
-                "time": "time slot (am/pm)",
-                "activity": "activity name",
-                "duration": "expected duration",
-                "cost": cost_in_INR,
-                "notes": "additional information or tips"
-            }}
-        ],
-        "dining_suggestions": [
-            {{
-                "meal": "meal type",
-                "restaurant": "restaurant name",
-                "cuisine": "cuisine type",
-                "estimated_cost": cost_in_INR
-            }}
-        ],
-        "total_cost": total_cost_in_INR,
-        "important_notes": ["list of important notes or tips"]
-    }}
-    """
-    return prompt
 
 @app.route('/proxy-api', methods=['POST'])
 def proxy_api():
@@ -190,65 +117,151 @@ def proxy_api():
             "details": str(e)
         }), 500
 
-@app.route('/process-sightseeing', methods=['POST'])
-def process_sightseeing():
+
+# TBO API Configuration
+TBO_API_URL = "https://SightseeingBE.tektravels.com/SightseeingService.svc/rest/Search"
+
+def get_activities_from_tbo(search_params):
+    """Make request to TBO API to get activities"""
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    }
+    
     try:
-        # Get input data from request
-        data = request.get_json()
-        # print("Received Frontend Data:", json.dumps(data, indent=2))  # Print frontend data
+        response = requests.post(
+            TBO_API_URL,
+            headers=headers,
+            json=search_params,
+            verify=False
+        )
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        raise Exception(f"TBO API request failed: {str(e)}")
 
-        # Validate response structure
-        if "Response" not in data or "SightseeingSearchResults" not in data["Response"]:
-            return jsonify({
-                "error": "Invalid data format",
-                "details": "Missing required fields in response"
-            }), 400
+def extract_activity_details(activity):
+    """Extract relevant details from a single activity"""
+    return {
+        "name": activity.get("SightseeingName", ""),
+        "city": activity.get("CityName", ""),
+        "duration": activity.get("DurationDescription", [{}])[0].get("TotalDuration", ""),
+        "description": activity.get("TourDescription", ""),
+        "price": activity.get("Price", {}).get("OfferedPriceRoundedOff", 0),
+        "inclusions": [
+            inc.strip() 
+            for inc in activity.get("TourDescription", "").split("Inclusions:")[1].split("Exclusions:")[0].split("<br>")
+            if inc.strip()
+        ] if "Inclusions:" in activity.get("TourDescription", "") else []
+    }
 
-        # Extract sightseeing information
-        sightseeing_data = extract_sightseeing_info(data)
-        # print("Extracted Sightseeing Data:", json.dumps(sightseeing_data, indent=2))  # Print extracted data
+def generate_itinerary_prompt(activities, num_days):
+    """Generate a prompt for Gemini API based on activities"""
+    activities_text = "\n".join([
+        f"Activity: {act['name']}\n"
+        f"Duration: {act['duration']}\n"
+        f"Price: {act['price']} INR\n"
+        f"Inclusions: {', '.join(act['inclusions'])}\n"
+        for act in activities
+    ])
 
-        if not sightseeing_data:
-            return jsonify({
-                "error": "No sightseeing data found",
-                "details": "Could not extract activity information"
-            }), 400
+    return f"""
+    Based on these available activities, create a {num_days}-day itinerary:
 
-        # Create prompt for the LLM
-        prompt = create_prompt(sightseeing_data)
-        print("Generated Prompt for Gemini API:", prompt)  # Print the prompt
+    {activities_text}
+
+    Create a detailed {num_days}-day itinerary that optimizes time and experience. Make sure to spread activities across all {num_days} days. Return the response in this exact JSON format for other days as well:
+    {{
+        "itinerary": [
+            {{
+                "day": 1,
+                "activities": [
+                    {{
+                        "time": "Morning/Afternoon/Evening",
+                        "activity": "Name of activity",
+                        "duration": "Duration in hours",
+                        "cost": "Cost in INR",
+                        "notes": "Any special instructions or tips"
+                    }}
+                ]
+            }}
+        ],
+        ...
+    }}
+    """
+@app.route('/create-itinerary', methods=['POST'])
+def create_itinerary():
+
+    # After getting search_params but before generating prompt
+    
+    try:
+        # Get search parameters from frontend
+        search_params = request.json
+        if not search_params:
+            return jsonify({"error": "No search parameters provided"}), 400
+        from_date = datetime.strptime(search_params["FromDate"].split('T')[0], '%Y-%m-%d')
+        to_date = datetime.strptime(search_params["ToDate"].split('T')[0], '%Y-%m-%d')
+        num_days = (to_date - from_date).days + 1  # +1 to include both start and end dates
+
+        # Validate required fields
+        required_fields = ["CityId", "CountryCode", "FromDate", "ToDate"]
+        missing_fields = [field for field in required_fields if field not in search_params]
+        if missing_fields:
+            return jsonify({"error": f"Missing required fields: {', '.join(missing_fields)}"}), 400
+
+        # Get activities from TBO API
+        try:
+            tbo_response = get_activities_from_tbo(search_params)
+        except Exception as e:
+            return jsonify({"error": f"Failed to fetch activities: {str(e)}"}), 500
+
+        # Extract activities
+        activities = []
+        if ("Response" in tbo_response and 
+            "SightseeingSearchResults" in tbo_response["Response"]):
+            for activity in tbo_response["Response"]["SightseeingSearchResults"]:
+                try:
+                    activity_details = extract_activity_details(activity)
+                    activities.append(activity_details)
+                except Exception as e:
+                    print(f"Error processing activity: {str(e)}")
+                    continue
+
+        if not activities:
+            return jsonify({"error": "No activities found for the given parameters"}), 404
 
         # Generate itinerary using Gemini
-        response = model.generate_content(prompt)
-        print("Gemini API Response:", response.text)  # Print the raw response
+        prompt = generate_itinerary_prompt(activities, num_days)
+        try:
+            response = model.generate_content(prompt)
+            
+            # Try to parse the response as JSON
+            try:
+                itinerary = json.loads(response.text)
+            except json.JSONDecodeError:
+                # If that fails, try to find and parse just the JSON part
+                json_start = response.text.find('{')
+                json_end = response.text.rfind('}') + 1
+                if json_start >= 0 and json_end > json_start:
+                    json_str = response.text[json_start:json_end]
+                    itinerary = json.loads(json_str)
+                else:
+                    raise ValueError("Could not find valid JSON in response")
 
-        # Parse the response
-        # try:
-        #     itinerary = eval(response.text)
-        #     print("Parsed Itinerary:", json.dumps(itinerary, indent=2))  # Print the parsed itinerary
-        # except Exception as e:
-        #     print("Error Parsing Gemini Response:", str(e))  # Print parsing errors
-        #     return jsonify({
-        #         "error": "Failed to parse LLM response",
-        #         "details": str(e)
-        #     }), 500
+            return jsonify(itinerary), 200
 
-        # Add original activity details to response
-        itinerary = response.text
-        print("Final Response to Frontend:", json.dumps(itinerary, indent=2))  # Print the final response
-        return jsonify(itinerary), 200
-
-    except ValueError as e:
-        return jsonify({
-            "error": "Data processing error",
-            "details": str(e)
-        }), 400
+        except Exception as e:
+            return jsonify({
+                "error": "Failed to generate itinerary",
+                "details": str(e)
+            }), 500
 
     except Exception as e:
         return jsonify({
             "error": "Server error",
             "details": str(e)
         }), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
