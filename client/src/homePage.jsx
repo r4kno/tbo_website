@@ -12,6 +12,7 @@ import { flightSample} from "./assets/flightSample"
 import titleFont from './fonts/titleFont.otf'
 import cityData from './assets/city_codes.json';
 import { use } from 'react';
+import HotelBooking from './components/HotelBooking';
 
 const HomePage = ({onComplete}) => {
   const [userIP, setUserIP] = useState("");
@@ -149,7 +150,7 @@ const hotelSearch = async (cityCode) => {
       mode: 'cors',
       body: JSON.stringify({
         // Your request body data h
-        CityCode: cityCode,
+        CityCode: 144306,
         IsDetailedResponse: "false"
         
       })
@@ -287,9 +288,9 @@ const backend = async () => {
 const getTimeline = async () => {
         // Frontend code example
         const searchParams = {
-          "CityId": "115936",  // Dubai
-          "CountryCode": "AE",
-          "FromDate": "2025-02-14T00:00:00",
+          "CityId": "144306",  // Dubai
+          "CountryCode": "IN",
+          "FromDate": queryData.departDate,
           "ToDate": "2025-02-18T00:00:00",
           "AdultCount": 2,
           "ChildCount": 1,
@@ -299,7 +300,7 @@ const getTimeline = async () => {
           "IsBaseCurrencyRequired": false,
           "BookingMode": 5,
           "EndUserIp": "192.168.5.56",
-          "TokenId": "92cacf82-022b-427a-b46a-3c32d169f1d3",
+          "TokenId": "5d869e1a-14d5-4b82-92cd-8bb221871c83",
           "KeyWord": ""
         };
         console.log('Sending request to backend for TIMELINE');
@@ -332,6 +333,7 @@ useEffect(() => {
     hotelSearch(cityCode);
   }
 }, [queryData]);
+
 useEffect(() => {
   if (flightResults && hotelResults) {
   console.log('planning over')
@@ -405,6 +407,13 @@ useEffect(() => {
           </div>
 
 ): (<></>)}
+        {hotelResults? (
+          <div className="mt-4 max-w-4xl mx-auto p-4 relative">
+            {/* {console.log("hotelResults being passed:", hotelResults.Hotels)} */}
+          <HotelBooking hotelData={hotelResults.Hotels} />
+        </div>
+) : (<></>
+)}
         {/* </div> */}
         {/* Search Form Card */}
 
@@ -422,8 +431,8 @@ useEffect(() => {
       </div>
             {isTourPlanned ? (
               <div className="col-span-1">
-                {console.log("queryData being passed:", queryData)}
-                <ItineraryPlanner queryData={queryData} />
+                {console.log("queryData being passed:", timeline)}
+                <ItineraryPlanner queryData={timeline} />
               </div>
             ) : (
               <div className="col-span-1">

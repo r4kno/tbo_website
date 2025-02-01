@@ -6,6 +6,7 @@ import ssl
 import urllib3
 import google.generativeai as genai
 from datetime import datetime
+from datetime import timedelta
 
 # Disable SSL warnings if needed
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -155,8 +156,24 @@ def extract_activity_details(activity):
         ] if "Inclusions:" in activity.get("TourDescription", "") else []
     }
 
-def generate_itinerary_prompt(activities, num_days):
-    """Generate a prompt for Gemini API based on activities"""
+
+
+def generate_itinerary_prompt(activities, num_days, from_date):
+    """
+    Generate a prompt for Gemini API based on activities and include proper date formatting.
+    
+    Args:
+        activities (list): List of activities with details.
+        num_days (int): Number of days for the itinerary.
+        from_date (datetime): The start date of the itinerary.
+    
+    Returns:
+        str: A formatted prompt for the Gemini API.
+    """
+    # Format the start date as a string
+    start_date_str = from_date.strftime("%Y-%m-%d")
+    
+    # Generate the activities text for the prompt
     activities_text = "\n".join([
         f"Activity: {act['name']}\n"
         f"Duration: {act['duration']}\n"
@@ -165,28 +182,44 @@ def generate_itinerary_prompt(activities, num_days):
         for act in activities
     ])
 
+    # Generate the prompt with proper date formatting
     return f"""
-    Based on these available activities, create a {num_days}-day itinerary:
+    Based on these available activities, create a {num_days}-day itinerary starting from {start_date_str}:
 
     {activities_text}
 
-    Create a detailed {num_days}-day itinerary that optimizes time and experience. Make sure to spread activities across all {num_days} days. Return the response in this exact JSON format for other days as well:
+    Create a detailed {num_days}-day itinerary that optimizes time and experience. Make sure to spread activities across all {num_days} days. Return the response in this exact JSON format:
+
     {{
         "itinerary": [
             {{
                 "day": 1,
                 "activities": [
                     {{
-                        "time": "Morning/Afternoon/Evening",
+                        "time": "{start_date_str}T09:00:00",  // Use ISO format for time
                         "activity": "Name of activity",
                         "duration": "Duration in hours",
                         "cost": "Cost in INR",
                         "notes": "Any special instructions or tips"
-                    }}
+                    }},
+                    // Add more activities for Day 1
                 ]
-            }}
-        ],
-        ...
+            }},
+            {{
+                "day": 2,
+                "activities": [
+                    {{
+                        "time": "{(from_date + timedelta(days=1)).strftime('%Y-%m-%d')}T10:00:00",  // Increment date for Day 2
+                        "activity": "Name of activity",
+                        "duration": "Duration in hours",
+                        "cost": "Cost in INR",
+                        "notes": "Any special instructions or tips"
+                    }},
+                    // Add more activities for Day 2
+                ]
+            }},
+            // Add more days as needed
+        ]
     }}
     """
 @app.route('/create-itinerary', methods=['POST'])
@@ -231,7 +264,7 @@ def create_itinerary():
             return jsonify({"error": "No activities found for the given parameters"}), 404
 
         # Generate itinerary using Gemini
-        prompt = generate_itinerary_prompt(activities, num_days)
+        prompt = generate_itinerary_prompt(activities, num_days, from_date)
         try:
             response = model.generate_content(prompt)
             

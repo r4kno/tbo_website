@@ -1,33 +1,27 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Calendar, Clock, MapPin } from "lucide-react";
 
-const mockSightseeingAPI = async (destination, days) => {
-  const dailyAttractions = {
-    1: [
-      { id: 1, name: "Historical Museum", duration: 120, timeSlot: "09:00" },
-      { id: 2, name: "Central Park", duration: 90, timeSlot: "11:30" },
-      { id: 3, name: "Local Market", duration: 60, timeSlot: "13:30" }
-    ],
-    2: [
-      { id: 4, name: "Art Gallery", duration: 120, timeSlot: "10:00" },
-      { id: 5, name: "Beach Walk", duration: 90, timeSlot: "13:00" },
-      { id: 6, name: "Sunset Point", duration: 60, timeSlot: "16:00" }
-    ]
-  };
-  
+const mockSightseeingAPI = async (timeline) => {
   return new Promise(resolve => {
     setTimeout(() => {
-      const result = {};
-      for (let i = 1; i <= days; i++) {
-        result[i] = dailyAttractions[i] || dailyAttractions[1];
-      }
-      return resolve(result);
+      const dailyAttractions = {};
+      timeline.itinerary.forEach(dayPlan => {
+        dailyAttractions[dayPlan.day] = dayPlan.activities.map((activity, index) => ({
+          id: `${dayPlan.day}-${index + 1}`,
+          name: activity.activity,
+          duration: parseInt(activity.duration),
+          timeSlot: activity.time,
+          notes: activity.notes,
+          cost: activity.cost
+        }));
+      });
+      
+      return resolve(dailyAttractions);
     }, 1000);
   });
 };
 
 const ItineraryPlanner = ({ queryData }) => {
-  console.log("ItineraryPlanner received queryData:", queryData);
   const [destination, setDestination] = useState("");
   const [numDays, setNumDays] = useState(1);
   const [startDate, setStartDate] = useState("");
@@ -37,16 +31,26 @@ const ItineraryPlanner = ({ queryData }) => {
   const daysRef = useRef({});
 
   const handleSearch = async () => {
-    if (!queryData) return;
+    // In handleSearch function
+    if (queryData.itinerary && queryData.itinerary[0].activities[0]) {
+      const firstActivity = queryData.itinerary[0].activities[0];
+      // Split ISO string at 'T' to get date part
+      setStartDate(firstActivity.time ? firstActivity.time.split('T')[0] : "");
+    }
     
-    setDestination(queryData.to);
-    setNumDays(queryData.returnDate);
-    setStartDate(queryData.departDate);
-    console.log("Searching for attractions in", queryData.to, "for", queryData.returnDate, "days");
+    // Extract information from queryData
+    setDestination(queryData.destination || "");
+    setNumDays(queryData.itinerary ? queryData.itinerary.length : 1);
+    
+    // Try to get start date from first day's first activity
+    if (queryData.itinerary && queryData.itinerary[0].activities[0]) {
+      const firstActivity = queryData.itinerary[0].activities[0];
+      setStartDate(firstActivity.time ? firstActivity.time.split(' ')[0] : "");
+    }
     
     setLoading(true);
     try {
-      const data = await mockSightseeingAPI(queryData.to, queryData.returnDate);
+      const data = await mockSightseeingAPI(queryData);
       setItinerary(data);
     } catch (error) {
       console.error("Error fetching attractions:", error);
@@ -61,6 +65,7 @@ const ItineraryPlanner = ({ queryData }) => {
   }, [queryData]);
 
   const getDayDate = (dayNum) => {
+    if (!startDate) return "";
     const date = new Date(startDate);
     date.setDate(date.getDate() + dayNum - 1);
     return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
@@ -91,8 +96,6 @@ const ItineraryPlanner = ({ queryData }) => {
 
   return (
     <div className="max-w-4xl mx-auto p-4 relative">
-     
-
       {Object.keys(itinerary).length > 0 && (
         <div className="flex gap-6">
           <div className="flex-grow space-y-6">
@@ -121,8 +124,18 @@ const ItineraryPlanner = ({ queryData }) => {
                               </h4>
                               <p className="text-sm text-gray-500 mt-2 flex items-center gap-2">
                                 <Clock className="w-4 h-4" />
-                                Duration: {attraction.duration} minutes
+                                Duration: {attraction.duration} hours
                               </p>
+                              {attraction.notes && (
+                                <p className="text-xs text-gray-500 mt-1">
+                                  {attraction.notes}
+                                </p>
+                              )}
+                              {attraction.cost && (
+                                <p className="text-xs text-gray-500 mt-1">
+                                  Cost: {attraction.cost}
+                                </p>
+                              )}
                             </div>
                           </div>
                         </div>
