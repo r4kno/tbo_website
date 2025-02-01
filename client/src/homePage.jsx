@@ -22,6 +22,14 @@ const HomePage = ({onComplete}) => {
   const [isPlanning, setIsPlanning] = useState(false);
   const [hotelResults, setHotelResults] = useState(null);
   const [isTourPlanned, setIsTourPlanned] = useState(false);
+  
+  const [token, setToken] = useState("");
+  const [flightResults, setFlightResults] = useState(null);
+  const [error, setError] = useState(null);
+  const [queryData, setQueryData] = useState(null);
+  const [timeline, setTimeline] = useState(null);
+  const [destinationCode, setDestinationCode] = useState(null);
+
 
   const getUserLocation = async () => {
     // Check localStorage first
@@ -150,7 +158,7 @@ const hotelSearch = async (cityCode) => {
       mode: 'cors',
       body: JSON.stringify({
         // Your request body data h
-        CityCode: 144306,
+        CityCode: cityCode,
         IsDetailedResponse: "false"
         
       })
@@ -163,11 +171,6 @@ const hotelSearch = async (cityCode) => {
     console.error('Error:', error);
   }
 };
-const [token, setToken] = useState("");
-const [flightResults, setFlightResults] = useState(null);
-const [error, setError] = useState(null);
-const [queryData, setQueryData] = useState(null);
-const [timeline, setTimeline] = useState(null);
 
 const transformQueryData = (queryData) => {
   if (!queryData) {
@@ -286,12 +289,34 @@ const backend = async () => {
 }
 
 const getTimeline = async () => {
-        // Frontend code example
+        // Parse dates and numbers correctly
+        const fromDate = new Date(queryData.departDate);
+        const numOfDays = parseInt(queryData.returnDate);
+
+        // Add days correctly (subtract 1 to include start date)
+        const toDate = new Date(fromDate);
+        toDate.setDate(fromDate.getDate() + (numOfDays - 1));
+
+        // Format dates for API
+        const formattedFromDate = fromDate.toISOString().split('T')[0];
+        const formattedToDate = toDate.toISOString().split('T')[0];
+
+        const cityMatch = cityData.CityList.find(city => 
+            city.Name.toLowerCase().includes(queryData.destination.toLowerCase())
+        );
+
+        if (cityMatch.Code) {
+            setDestinationCode(cityMatch.Code);
+            console.log("Destination code:", cityMatch.Code);
+        }
+
+
+
         const searchParams = {
-          "CityId": "144306",  // Dubai
+          "CityId": cityMatch.Code,  // Dubai
           "CountryCode": "IN",
-          "FromDate": queryData.departDate,
-          "ToDate": "2025-02-18T00:00:00",
+          "FromDate": formattedFromDate,
+          "ToDate": formattedToDate,
           "AdultCount": 2,
           "ChildCount": 1,
           "ChildAge": ["2"],
@@ -303,7 +328,7 @@ const getTimeline = async () => {
           "TokenId": "5d869e1a-14d5-4b82-92cd-8bb221871c83",
           "KeyWord": ""
         };
-        console.log('Sending request to backend for TIMELINE');
+        console.log('Sending request to backend for TIMELINE: ', searchParams);
 
         // Make request to your backend
         const response = await fetch('http://localhost:5000/create-itinerary', {
@@ -330,12 +355,22 @@ useEffect(() => {
   if (queryData) {
     console.log('queryData updated:', queryData);
     backend();
-    hotelSearch(cityCode);
+    getTimeline().then(() => {
+      if(timeline){
+        console.log('hotel search being called: ', destinationCode)
+        hotelSearch(destinationCode);
+      }
+    });
+      
+    // if (destinationCode){
+    //   console.log('Searchingr hotels: ', destinationCode)
+    //   hotelSearch(destinationCode);
+    // }
   }
 }, [queryData]);
 
 useEffect(() => {
-  if (flightResults && hotelResults) {
+  if (flightResults && destinationCode) {
   console.log('planning over')
   setIsPlanning(false);
   }

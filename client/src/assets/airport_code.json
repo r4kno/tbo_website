@@ -1,0 +1,175 @@
+{
+    "airports": [
+      {
+        "value": "DEL",
+        "label": "New Delhi",
+        "city": "Delhi"
+      },
+      {
+        "value": "BOM",
+        "label": "Mumbai",
+        "city": "Mumbai"
+      },
+      {
+        "value": "BLR",
+        "label": "Bangalore",
+        "city": "Bangalore"
+      },
+      {
+        "value": "HYD",
+        "label": "Hyderabad",
+        "city": "Hyderabad"
+      },
+      {
+        "value": "MAA",
+        "label": "Chennai",
+        "city": "Chennai"
+      },
+      {
+        "value": "CCU",
+        "label": "Kolkata",
+        "city": "Kolkata"
+      },
+      {
+        "value": "GOI",
+        "label": "Goa",
+        "city": "Goa"
+      },
+      {
+        "value": "COK",
+        "label": "Kochi",
+        "city": "Kochi"
+      },
+      {
+        "value": "JAI",
+        "label": "Jaipur",
+        "city": "Jaipur"
+      },
+      {
+        "value": "IXC",
+        "label": "Chandigarh",
+        "city": "Chandigarh"
+      },
+      {
+        "value": "IXB",
+        "label": "Bagdogra",
+        "city": "Darjeeling"
+      },
+      {
+        "value": "IXZ",
+        "label": "Port Blair",
+        "city": "Andaman and Nicobar Islands"
+      },
+      {
+        "value": "DED",
+        "label": "Dehradun",
+        "city": "Dehradun"
+      },
+      {
+        "value": "IXR",
+        "label": "Ranchi",
+        "city": "Ranchi"
+      },
+      {
+        "value": "VNS",
+        "label": "Varanasi",
+        "city": "Varanasi"
+      },
+      {
+        "value": "AMD",
+        "label": "Ahmedabad",
+        "city": "Ahmedabad"
+      },
+      {
+        "value": "GAU",
+        "label": "Guwahati",
+        "city": "Guwahati"
+      },
+      {
+        "value": "IXM",
+        "label": "Madurai",
+        "city": "Madurai"
+      },
+      {
+        "value": "TRV",
+        "label": "Thiruvananthapuram",
+        "city": "Thiruvananthapuram"
+      },
+      {
+        "value": "SXR",
+        "label": "Srinagar",
+        "city": "Srinagar"
+      },
+      {
+        "value": "IXL",
+        "label": "Leh",
+        "city": "Leh"
+      },
+      {
+        "value": "PNQ",
+        "label": "Pune",
+        "city": "Pune"
+      },
+      {
+        "value": "IXU",
+        "label": "Aurangabad",
+        "city": "Aurangabad"
+      },
+      {
+        "value": "BBI",
+        "label": "Bhubaneswar",
+        "city": "Bhubaneswar"
+      },
+      {
+        "value": "IXD",
+        "label": "Prayagraj",
+        "city": "Prayagraj"
+      },
+      {
+        "value": "JDH",
+        "label": "Jodhpur",
+        "city": "Jodhpur"
+      },
+      {
+        "value": "UDR",
+        "label": "Udaipur",
+        "city": "Udaipur"
+      },
+      {
+        "value": "IXJ",
+        "label": "Jammu",
+        "city": "Jammu"
+      },
+      {
+        "value": "STV",
+        "label": "Surat",
+        "city": "Surat"
+      },
+      {
+        "value": "VTZ",
+        "label": "Visakhapatnam",
+        "city": "Visakhapatnam"
+      },
+      {
+        "value": "IXE",
+        "label": "Mangalore",
+        "city": "Mangalore"
+      },
+      {
+        "value": "PAT",
+        "label": "Patna",
+        "city": "Patna"
+      },
+      {
+        "value": "IMF",
+        "label": "Imphal",
+        "city": "Imphal"
+      },
+      {
+        "value": "SHL",
+        "label": "Shillong",
+        "city": "Shillong"
+      }
+    ]
+  }
+  

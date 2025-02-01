@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plane, Send, ArrowRight, ArrowLeft } from 'lucide-react';
+import airportsData from '../assets/airport_code.json';
 
 const TourBookingWizard = ({ onComplete }) => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -18,16 +19,12 @@ const TourBookingWizard = ({ onComplete }) => {
 
   const steps = [
     {
+      
       question: "Where would you like to go?",
       field: "to",
       type: "select",
-      options: [
-        { value: "DEL", label: "Delhi" },
-        { value: "BOM", label: "Mumbai" },
-        { value: "BLR", label: "Bangalore" },
-        { value: "HYD", label: "Hyderabad" },
-        { value: "MAA", label: "Chennai" }
-      ],
+      options: airportsData.airports,
+      placeholder: "Select destination airport",
       placeholder: "Enter destination"
     },
     {
@@ -97,10 +94,23 @@ const TourBookingWizard = ({ onComplete }) => {
   ].filter(step => step.question !== null);
 
   const handleInputChange = (value) => {
-    setQueryData(prev => ({
-      ...prev,
-      [steps[currentStep].field]: value
-    }));
+    const currentField = steps[currentStep].field;
+    
+    // Special handling for destination selection
+    if (currentField === 'to') {
+      const selectedAirport = airportsData.airports.find(airport => airport.value === value);
+      setQueryData(prev => ({
+        ...prev,
+        to: value,
+        destination: selectedAirport ? selectedAirport.city : ''
+      }));
+    } else {
+      // Normal handling for other fields
+      setQueryData(prev => ({
+        ...prev,
+        [currentField]: value
+      }));
+    }
   };
 
   const nextStep = () => {
