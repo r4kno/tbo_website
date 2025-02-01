@@ -290,7 +290,7 @@ const getTimeline = async () => {
         const searchParams = {
           "CityId": "144306",  // Dubai
           "CountryCode": "IN",
-          "FromDate": "2025-02-14T00:00:00",
+          "FromDate": queryData.departDate,
           "ToDate": "2025-02-18T00:00:00",
           "AdultCount": 2,
           "ChildCount": 1,
@@ -409,7 +409,7 @@ useEffect(() => {
 ): (<></>)}
         {hotelResults? (
           <div className="mt-4 max-w-4xl mx-auto p-4 relative">
-            {console.log("hotelResults being passed:", hotelResults.Hotels)}
+            {/* {console.log("hotelResults being passed:", hotelResults.Hotels)} */}
           <HotelBooking hotelData={hotelResults.Hotels} />
         </div>
 ) : (<></>

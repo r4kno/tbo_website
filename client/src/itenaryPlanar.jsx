@@ -31,7 +31,12 @@ const ItineraryPlanner = ({ queryData }) => {
   const daysRef = useRef({});
 
   const handleSearch = async () => {
-    if (!queryData) return;
+    // In handleSearch function
+    if (queryData.itinerary && queryData.itinerary[0].activities[0]) {
+      const firstActivity = queryData.itinerary[0].activities[0];
+      // Split ISO string at 'T' to get date part
+      setStartDate(firstActivity.time ? firstActivity.time.split('T')[0] : "");
+    }
     
     // Extract information from queryData
     setDestination(queryData.destination || "");
