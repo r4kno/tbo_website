@@ -36,34 +36,31 @@ The **Travel Trip Planner** is a modern web application designed to simplify the
 1. Clone the repository:
    ```bash
    git clone https://github.com/r4kno/tbo_website.git
-   cd tbo_website/client
+   cd tbo_website
    ```
-
-2. Install dependencies:
+2. Start the backend server:
+   ```bash
+   cd server
+   pip install -r requirements.txt
+   python3 backend.py
+   ```
+3. Install dependencies and run frontend:
    ```bash
    cd client
    npm install
-   ```
-
-3. Start the backend server:
-   ```bash
-   cd server
-   python3 backend.py
-   ```
-   The backend will run at `http://localhost:5000`.
-
-4. Start the frontend using Vite:
-   ```bash
    npm run dev
    ```
-   Open your browser and navigate to the URL provided in the terminal (usually `http://localhost:5173`).
+
+The backend will run at `http://localhost:5000`.
+
+Open your browser and navigate to the URL provided in the terminal (usually `http://localhost:5173`).
 
 ---
 
 ## 📂 Project Structure
 
 ```
-travel-trip-planner/
+tbo_website/
 ├── server/
 │   ├── backend.py           # Backend made in python with flask
 ├── client/
