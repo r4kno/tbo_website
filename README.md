@@ -41,6 +41,7 @@ The **Travel Trip Planner** is a modern web application designed to simplify the
 
 2. Install dependencies:
    ```bash
+   cd client
    npm install
    ```
 
@@ -49,7 +50,7 @@ The **Travel Trip Planner** is a modern web application designed to simplify the
    cd server
    python3 backend.py
    ```
-   The backend will run at `http://localhost:4000`.
+   The backend will run at `http://localhost:5000`.
 
 4. Start the frontend using Vite:
    ```bash
@@ -63,11 +64,9 @@ The **Travel Trip Planner** is a modern web application designed to simplify the
 
 ```
 travel-trip-planner/
-├── backend/
-│   ├── server.js           # Backend logic and API endpoints
-│   ├── package.json        # Backend dependencies
-│   └── .env                # Environment variables
-├── frontend/
+├── server/
+│   ├── backend.py           # Backend made in python with flask
+├── client/
 │   ├── public/             # Static assets
 │   ├── src/                # React components and logic
 │   │   ├── App.jsx         # Main React app file
