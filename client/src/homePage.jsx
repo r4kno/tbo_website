@@ -309,8 +309,8 @@ const getTimeline = async () => {
             setDestinationCode(cityMatch.Code);
             console.log("Destination code:", cityMatch.Code);
         }
-
-
+        console.log('searching hotels for city code: ', cityMatch.Code);
+        hotelSearch(cityMatch.Code);
 
         const searchParams = {
           "CityId": cityMatch.Code,  // Dubai
@@ -325,7 +325,7 @@ const getTimeline = async () => {
           "IsBaseCurrencyRequired": false,
           "BookingMode": 5,
           "EndUserIp": "192.168.5.56",
-          "TokenId": "5d869e1a-14d5-4b82-92cd-8bb221871c83",
+          "TokenId": token,
           "KeyWord": ""
         };
         console.log('Sending request to backend for TIMELINE: ', searchParams);
@@ -355,13 +355,9 @@ useEffect(() => {
   if (queryData) {
     console.log('queryData updated:', queryData);
     backend();
-    getTimeline().then(() => {
-      if(timeline){
-        console.log('hotel search being called: ', destinationCode)
-        hotelSearch(destinationCode);
-      }
-    });
-      
+    getTimeline();
+    
+
     // if (destinationCode){
     //   console.log('Searchingr hotels: ', destinationCode)
     //   hotelSearch(destinationCode);
