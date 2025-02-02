@@ -148,8 +148,8 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 ## 🌟 Acknowledgments
 
 - [Vite](https://vitejs.dev/) for the frontend setup.
-- [Express.js](https://expressjs.com/) for the backend framework.
-- [OpenAI](https://openai.com/) and [Hugging Face](https://huggingface.co/) for AI integration.
+- [flask] for the backend framework.
+- [Gemini](https://gemini.com/) for AI integration.
 
 ---
 
