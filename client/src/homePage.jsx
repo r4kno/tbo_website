@@ -89,7 +89,6 @@ const HomePage = ({onComplete}) => {
     }
 };
 
-
 // Update formData to use use
 const Authenticate = async () => {
   // Check localStorage first
@@ -309,8 +308,8 @@ const getTimeline = async () => {
             setDestinationCode(cityMatch.Code);
             console.log("Destination code:", cityMatch.Code);
         }
-        console.log('searching hotels for city code: ', destinationCode);
-        hotelSearch(destinationCode);
+        console.log('searching hotels for city code: ', cityMatch.Code);
+        hotelSearch(cityMatch.Code);
 
         const searchParams = {
           "CityId": cityMatch.Code,  // Dubai
@@ -356,6 +355,7 @@ useEffect(() => {
     console.log('queryData updated:', queryData);
     backend();
     getTimeline();
+    setIsPlanning(true);
     
 
     // if (destinationCode){
@@ -376,6 +376,7 @@ useEffect(() => {
   getUserLocation().then(() => {
     Authenticate();
   });
+  setIsPlanning(false);
 }, []);
   return (
     <>
