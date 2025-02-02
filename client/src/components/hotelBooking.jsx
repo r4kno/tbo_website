@@ -2,7 +2,11 @@ import React from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import hotelImage from '../assets/hotel.jpeg'; // Add your hotel image
+import hotelImage1 from '../assets/hotel.jpeg';
+import hotelImage2 from '../assets/hotel2.jpg';
+import hotelImage3 from '../assets/hotel3.jpeg';
+
+const hotelImages = [hotelImage1, hotelImage2, hotelImage3];
 
 const defaultHotelData = [
   {
@@ -145,10 +149,11 @@ const HotelBooking = ({ hotelData = defaultHotelData }) => {
                     </button>
                   </div>
                 </div>
-                {/* Image Container */}
+                {/* Modified Image Container */}
                 <div className="relative aspect-square w-72 shadow-md rounded-lg overflow-hidden">
                   <img 
-                    src={hotelImage} 
+                    src={hotelImages[index % 3]}
+                    alt={`Hotel ${index + 1}`}
                     className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                   />
                 </div>

@@ -24,7 +24,6 @@ const TourBookingWizard = ({ onComplete }) => {
       field: "to",
       type: "select",
       options: airportsData.airports,
-      placeholder: "Select destination airport",
       placeholder: "Enter destination"
     },
     {

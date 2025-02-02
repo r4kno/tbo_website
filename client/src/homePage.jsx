@@ -12,7 +12,7 @@ import { flightSample} from "./assets/flightSample"
 import titleFont from './fonts/titleFont.otf'
 import cityData from './assets/city_codes.json';
 import { use } from 'react';
-import HotelBooking from './components/HotelBooking';
+import HotelBooking from './components/hotelBooking';
 
 const HomePage = ({onComplete}) => {
   const [userIP, setUserIP] = useState("");
