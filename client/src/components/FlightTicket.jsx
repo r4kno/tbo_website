@@ -1,4 +1,5 @@
 import React from 'react';
+import planeImage from '../assets/plane.jpeg'; // Add your plane image
 
 const defaultFlightData = {
   Segments: [[{
@@ -79,53 +80,65 @@ const FlightTicket = ({ flightData = defaultFlightData }) => {
   };
 
   return (
-    <div className="max-w-2xl p-6 bg-white rounded-lg shadow-md">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold text-gray-800">
-          {flightDetails.airline} {flightDetails.aircraftType}
-        </h2>
-        <span className="text-xl text-red-500 font-semibold">
-          {pricing.amount}
-        </span>
-      </div>
-      
-      <div className="text-gray-600 mb-6">
-        {schedule.date}
-        <span className="float-right">{schedule.duration}</span>
-      </div>
+    <div className="flex gap-6 items-stretch">
 
-      <div className="flex items-center justify-between mt-4">
-        <div className="flex-1">
-          <div className="text-2xl font-bold">{schedule.departure.time}</div>
-          <div className="text-gray-600">
-            {schedule.departure.city}({schedule.departure.code})
-          </div>
+      {/* Existing Ticket Component */}
+      <div className="flex-1 p-6 bg-white rounded-lg shadow-md">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold text-gray-800">
+            {flightDetails.airline} {flightDetails.aircraftType}
+          </h2>
+          <span className="text-xl text-red-500 font-semibold">
+            {pricing.amount}
+          </span>
+        </div>
+        
+        <div className="text-gray-600 mb-6">
+          {schedule.date}
+          <span className="float-right">{schedule.duration}</span>
         </div>
 
-        <div className="flex-1 flex justify-center items-center px-4">
-          <div className="w-full flex items-center">
-            <div className="h-[2px] flex-1 bg-gray-300"></div>
-            <div className="mx-2">
-              <svg className="w-6 h-6 text-gray-600 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-              </svg>
+        <div className="flex items-center justify-between mt-4">
+          <div className="flex-1">
+            <div className="text-2xl font-bold">{schedule.departure.time}</div>
+            <div className="text-gray-600">
+              {schedule.departure.city}({schedule.departure.code})
             </div>
-            <div className="h-[2px] flex-1 bg-gray-300"></div>
+          </div>
+
+          <div className="flex-1 flex justify-center items-center px-4">
+            <div className="w-full flex items-center">
+              <div className="h-[2px] flex-1 bg-gray-300"></div>
+              <div className="mx-2">
+                <svg className="w-6 h-6 text-gray-600 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                </svg>
+              </div>
+              <div className="h-[2px] flex-1 bg-gray-300"></div>
+            </div>
+          </div>
+
+          <div className="flex-1 text-right">
+            <div className="text-2xl font-bold">{schedule.arrival.time}</div>
+            <div className="text-gray-600">
+              {schedule.arrival.city}({schedule.arrival.code})
+            </div>
           </div>
         </div>
 
-        <div className="flex-1 text-right">
-          <div className="text-2xl font-bold">{schedule.arrival.time}</div>
+        <div className="flex justify-between mt-6">
           <div className="text-gray-600">
-            {schedule.arrival.city}({schedule.arrival.code})
+            Flight Number: {flightDetails.flightNumber}
           </div>
         </div>
       </div>
-
-      <div className="flex justify-between mt-6">
-        <div className="text-gray-600">
-          Flight Number: {flightDetails.flightNumber}
-        </div>
+      {/* Image Container */}
+      <div className="relative w-52 hauto aspect-square shadow-md rounded-lg overflow-hidden">
+        <img 
+          src={planeImage} 
+          alt="Airplane"
+          className="w-full h-full object-cover rounded-lg shadow-xl"
+        />
       </div>
     </div>
   );

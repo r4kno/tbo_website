@@ -148,6 +148,7 @@ def extract_activity_details(activity):
         "city": activity.get("CityName", ""),
         "duration": activity.get("DurationDescription", [{}])[0].get("TotalDuration", ""),
         "description": activity.get("TourDescription", ""),
+        "image": activity.get("ImageList", [])[0] if activity.get("ImageList") else None,
         "price": activity.get("Price", {}).get("OfferedPriceRoundedOff", 0),
         "inclusions": [
             inc.strip() 
@@ -179,6 +180,7 @@ def generate_itinerary_prompt(activities, num_days, from_date):
         f"Duration: {act['duration']}\n"
         f"Price: {act['price']} INR\n"
         f"Inclusions: {', '.join(act['inclusions'])}\n"
+        f"image: {act['image']}\n"
         for act in activities
     ])
 
@@ -201,6 +203,7 @@ def generate_itinerary_prompt(activities, num_days, from_date):
                         "duration": "Duration in hours",
                         "cost": "Cost in INR",
                         "notes": "Any special instructions or tips"
+                        "image": "Image URL"
                     }},
                     // Add more activities for Day 1
                 ]

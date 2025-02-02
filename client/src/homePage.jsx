@@ -158,7 +158,7 @@ const hotelSearch = async (cityCode) => {
       body: JSON.stringify({
         // Your request body data h
         CityCode: cityCode,
-        IsDetailedResponse: "false"
+        IsDetailedResponse: "true"
         
       })
     });
@@ -355,7 +355,6 @@ useEffect(() => {
     console.log('queryData updated:', queryData);
     backend();
     getTimeline();
-    setIsPlanning(true);
     
 
     // if (destinationCode){
@@ -366,7 +365,7 @@ useEffect(() => {
 }, [queryData]);
 
 useEffect(() => {
-  if (flightResults && timeline && hotelResults) {
+  if (flightResults ) {
   console.log('planning over')
   setIsPlanning(false);
   }

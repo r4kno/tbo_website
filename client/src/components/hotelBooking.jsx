@@ -2,6 +2,7 @@ import React from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import hotelImage from '../assets/hotel.jpeg'; // Add your hotel image
 
 const defaultHotelData = [
   {
@@ -9,90 +10,41 @@ const defaultHotelData = [
     HotelRating: "ThreeStar",
     Address: "123 Main St",
     CityName: "New York",
-    CountryName: "USA",
-    HotelCode: "H123",
+    HotelFacilities: [
+      "Free WiFi",
+      "Swimming Pool",
+      "Fitness Center",
+      "Restaurant",
+      "24-Hour Front Desk",
+    ],
+    PhoneNumber: "+1 123-456-7890",
+    HotelWebsiteUrl: "http://hotel-a.com",
   },
   {
     HotelName: "Hotel B",
     HotelRating: "FourStar",
     Address: "456 Elm St",
     CityName: "Los Angeles",
-    CountryName: "USA",
-    HotelCode: "H456",
+    HotelFacilities: [
+      "Free Breakfast",
+      "Spa",
+      "Business Center",
+      "Bar",
+      "Room Service",
+    ],
+    PhoneNumber: "+1 234-567-8901",
+    HotelWebsiteUrl: "http://hotel-b.com",
   },
-  {
-    HotelName: "Hotel C",
-    HotelRating: "FiveStar",
-    Address: "789 Oak St",
-    CityName: "Chicago",
-    CountryName: "USA",
-    HotelCode: "H789",
-  },
-  {
-    HotelName: "Hotel D",
-    HotelRating: "ThreeStar",
-    Address: "101 Pine St",
-    CityName: "San Francisco",
-    CountryName: "USA",
-    HotelCode: "H101",
-  },
-  {
-    HotelName: "Hotel E",
-    HotelRating: "FourStar",
-    Address: "202 Maple St",
-    CityName: "Seattle",
-    CountryName: "USA",
-    HotelCode: "H202",
-  },
-  {
-    HotelName: "Hotel F",
-    HotelRating: "FiveStar",
-    Address: "303 Cedar St",
-    CityName: "Boston",
-    CountryName: "USA",
-    HotelCode: "H303",
-  },
-  {
-    HotelName: "Hotel G",
-    HotelRating: "ThreeStar",
-    Address: "404 Birch St",
-    CityName: "Miami",
-    CountryName: "USA",
-    HotelCode: "H404",
-  },
-  {
-    HotelName: "Hotel H",
-    HotelRating: "FourStar",
-    Address: "505 Walnut St",
-    CityName: "Dallas",
-    CountryName: "USA",
-    HotelCode: "H505",
-  },
-  {
-    HotelName: "Hotel I",
-    HotelRating: "FiveStar",
-    Address: "606 Cherry St",
-    CityName: "Houston",
-    CountryName: "USA",
-    HotelCode: "H606",
-  },
-  {
-    HotelName: "Hotel J",
-    HotelRating: "ThreeStar",
-    Address: "707 Spruce St",
-    CityName: "Atlanta",
-    CountryName: "USA",
-    HotelCode: "H707",
-  },
+  // Add more hotels as needed
 ];
 
 const HotelBooking = ({ hotelData = defaultHotelData }) => {
   // Function to handle the booking action
   const handleBookNow = (hotelName) => {
     alert(`Booking ${hotelName}`);
-    // You can replace the alert with actual booking logic
   };
 
+  const top10Hotels = hotelData.slice(0, 10);
   // Slider settings for the carousel
   const settings = {
     dots: true,
@@ -107,59 +59,98 @@ const HotelBooking = ({ hotelData = defaultHotelData }) => {
     centerPadding: '0', // Remove extra padding
   };
 
-  // Limit the hotels to the top 10
-  const top10Hotels = hotelData.slice(0, 10);
+  // Function to render stars based on rating
+  const renderStars = (rating) => {
+    switch (rating) {
+      case "OneStar":
+        return "★";
+      case "TwoStar":
+        return "★★";
+      case "ThreeStar":
+        return "★★★";
+      case "FourStar":
+        return "★★★★";
+      case "FiveStar":
+        return "★★★★★";
+      default:
+        return "N/A";
+    }
+  };
+
+  // Function to get 3 random features
+  const getRandomFeatures = (facilities) => {
+    if (!facilities || facilities.length === 0) return [];
+    const shuffled = [...facilities].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 3);
+  };
 
   return (
     <div className="container mx-auto p-4">
       <Slider {...settings}>
         {top10Hotels.map((hotel, index) => {
-          const hotelDetails = {
-            name: hotel.HotelName || "Unknown Hotel",
-            rating: hotel.HotelRating || "N/A",
-            address: hotel.Address || "N/A",
-            city: hotel.CityName || "N/A",
-            country: hotel.CountryName || "N/A",
-            code: hotel.HotelCode || "N/A",
-          };
+          const {
+            HotelName = "Unknown Hotel",
+            HotelRating = "N/A",
+            Address = "N/A",
+            CityName = "N/A",
+            HotelFacilities = [],
+            PhoneNumber = "N/A",
+            HotelWebsiteUrl = "#",
+          } = hotel;
+
+          // Get 3 random features
+          const randomFeatures = getRandomFeatures(HotelFacilities);
 
           return (
             <div key={index} className="p-4">
-              <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-2xl font-bold text-gray-800">
-                    {hotelDetails.name}
-                  </h2>
-                  <span className="text-xl text-red-500 font-semibold">
-                    {hotelDetails.rating}
-                  </span>
-                </div>
+              <div className="flex gap-6 items-stretch max-w-5xl mx-auto">
 
-                <div className="text-gray-600 mb-6">
-                  <div className="flex items-center space-x-2">
-                    <span className="text-yellow-500">
-                      {hotelDetails.rating === "ThreeStar" ? "★★★" : "N/A"}
+                {/* Hotel Card */}
+                <div className="flex-1 p-6 bg-white rounded-lg shadow-md">
+                  {/* Hotel Header */}
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-2xl font-bold text-gray-800">{HotelName}</h2>
+                    <span className="text-xl text-red-500 font-semibold">
+                      {renderStars(HotelRating)}
+                      {/* <h6>{HotelRating}</h6>  */}
                     </span>
-                    <span>({hotelDetails.rating})</span>
                   </div>
-                  <div className="mt-2">
-                    {hotelDetails.address}
+
+                  {/* Address Section */}
+                  <div className="text-gray-600 mb-4">
+                    <p>{Address}</p>
+                    <p>{CityName}</p>
                   </div>
-                  <div className="mt-1">
-                    {hotelDetails.city}, {hotelDetails.country}
+
+                  {/* Random Features */}
+                  <div className="mb-4">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-2">Hotel Facilities:</h3>
+                    <ul className="list-disc list-inside pl-4">
+                      {randomFeatures.map((feature, idx) => (
+                        <li key={idx} className="text-gray-600">{feature}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Contact & Booking */}
+                  <div className="flex justify-between items-center mt-6 border-t pt-4">
+                    <div className="text-gray-600">
+                      <p>Phone: {PhoneNumber}</p>
+                    </div>
+                    <button
+                      onClick={() => handleBookNow(HotelName)}
+                      className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300"
+                    >
+                      Book Now
+                    </button>
                   </div>
                 </div>
-
-                <div className="flex justify-between items-center mt-6">
-                  <div className="text-gray-600">
-                    Hotel Code: {hotelDetails.code}
-                  </div>
-                  <button
-                    onClick={() => handleBookNow(hotelDetails.name)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300"
-                  >
-                    Book Now
-                  </button>
+                {/* Image Container */}
+                <div className="relative aspect-square w-72 shadow-md rounded-lg overflow-hidden">
+                  <img 
+                    src={hotelImage} 
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  />
                 </div>
               </div>
             </div>
