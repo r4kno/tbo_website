@@ -309,8 +309,8 @@ const getTimeline = async () => {
             setDestinationCode(cityMatch.Code);
             console.log("Destination code:", cityMatch.Code);
         }
-        console.log('searching hotels for city code: ', cityMatch.Code);
-        hotelSearch(cityMatch.Code);
+        console.log('searching hotels for city code: ', destinationCode);
+        hotelSearch(destinationCode);
 
         const searchParams = {
           "CityId": cityMatch.Code,  // Dubai
@@ -366,7 +366,7 @@ useEffect(() => {
 }, [queryData]);
 
 useEffect(() => {
-  if (flightResults && destinationCode) {
+  if (flightResults && timeline && hotelResults) {
   console.log('planning over')
   setIsPlanning(false);
   }
